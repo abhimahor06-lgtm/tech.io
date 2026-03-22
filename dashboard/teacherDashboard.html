@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Dashboard – Poornima University</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--accent:#d2a8ff;--accent2:#56d364;--yellow:#e3b341;--red:#f85149;--blue:#79c0ff;--text:#e6edf3;--muted:#8b949e;--white:#ffffff;--sidebar-w:240px;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;}
+  .sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+  .sidebar-logo{padding:20px 16px;border-bottom:1px solid var(--border);}
+  .sidebar-logo h2{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--accent);letter-spacing:.5px;}
+  .sidebar-logo span{font-size:11px;color:var(--muted);}
+  .sidebar-nav{padding:8px 0;flex:1;}
+  .menu-item{display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:13.5px;color:var(--muted);cursor:pointer;border-radius:6px;margin:2px 8px;transition:all .2s;text-decoration:none;}
+  .menu-item:hover{background:var(--surface2);color:var(--text);}
+  .menu-item.active{background:rgba(210,168,255,.12);color:var(--accent);font-weight:600;}
+  .menu-item .ico{font-size:16px;width:20px;text-align:center;}
+  .sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);}
+  .user-chip{display:flex;align-items:center;gap:10px;}
+  .user-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--bg);flex-shrink:0;}
+  .user-info{flex:1;min-width:0;}
+  .user-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .user-role{font-size:11px;color:var(--muted);}
+  .btn-logout{font-size:12px;color:var(--red);cursor:pointer;background:none;border:none;font-family:inherit;}
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;}
+  .topbar h1{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;}
+  .topbar-right{display:flex;align-items:center;gap:12px;}
+  .search-box{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;font-size:13px;font-family:inherit;width:200px;outline:none;}
+  .notif-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;position:relative;}
+  .notif-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:10px;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .content-area{flex:1;overflow-y:auto;padding:24px;}
+  .section-content{display:none;}
+  .section-content.active{display:block;}
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:8px;transition:border-color .2s;}
+  .stat-card:hover{border-color:var(--accent);}
+  .stat-icon{font-size:24px;}
+  .stat-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:600;}
+  .stat-number{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;color:var(--white);}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;}
+  .card h3{font-size:15px;font-weight:600;margin-bottom:16px;}
+  .dashboard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+  .dashboard-grid .card{margin:0;}
+  .data-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  .data-table th{text-align:left;padding:10px 14px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border);}
+  .data-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  .data-table tr:last-child td{border-bottom:none;}
+  .data-table tbody tr:hover{background:rgba(255,255,255,.03);}
+  .badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+  .badge-success{background:rgba(86,211,100,.15);color:var(--accent2);}
+  .badge-warning{background:rgba(227,179,65,.15);color:var(--yellow);}
+  .badge-danger{background:rgba(248,81,73,.15);color:var(--red);}
+  .badge-info{background:rgba(121,192,255,.15);color:var(--blue);}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s;}
+  .btn-primary{background:var(--accent);color:var(--bg);}
+  .btn-primary:hover{opacity:.85;}
+  .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+  .btn-success{background:rgba(86,211,100,.15);color:var(--accent2);border:1px solid rgba(86,211,100,.3);font-size:12px;padding:5px 10px;}
+  .btn-danger{background:rgba(248,81,73,.15);color:var(--red);border:1px solid rgba(248,81,73,.3);font-size:12px;padding:5px 10px;}
+  .btn-small{font-size:12px;padding:5px 10px;}
+  .search-filter{display:flex;gap:10px;margin-bottom:16px;}
+  .search-input,.filter-select,.form-control{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:13px;font-family:inherit;outline:none;}
+  .search-input:focus,.filter-select:focus,.form-control:focus{border-color:var(--accent);}
+  .search-input{flex:1;}
+  .filter-select option,.form-control option{background:var(--surface2);}
+  .form-group{margin-bottom:14px;}
+  .form-group label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+  .form-control{width:100%;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--muted);gap:10px;}
+  .spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .empty{text-align:center;padding:40px;color:var(--muted);font-size:13px;}
+  #toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+  .toast{padding:12px 18px;border-radius:8px;font-size:13.5px;font-weight:500;color:#fff;animation:slideIn .3s ease;box-shadow:0 4px 16px rgba(0,0,0,.4);}
+  .toast-success{background:#1a7f37;}.toast-error{background:#b91c1c;}.toast-info{background:#1d4ed8;}
+  @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+  .att-row select{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:5px;font-family:inherit;font-size:12px;}
+  .timetable-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+  .timetable-item:last-child{border-bottom:none;}
+  .time-badge{background:rgba(210,168,255,.15);color:var(--accent);padding:4px 10px;border-radius:4px;font-size:12px;font-weight:600;white-space:nowrap;}
+</style>
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="../js/chat-widget.js" defer></script>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h2>👨‍🏫 Teacher Panel</h2>
+    <span>Poornima University</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="menu-item active" data-section="overview"><span class="ico">📊</span>Overview</a>
+    <a class="menu-item" data-section="subjects"><span class="ico">📚</span>My Subjects</a>
+    <a class="menu-item" data-section="students"><span class="ico">👨‍🎓</span>Students</a>
+    <a class="menu-item" data-section="attendance"><span class="ico">📋</span>Mark Attendance</a>
+    <a class="menu-item" data-section="marks"><span class="ico">📝</span>Upload Marks</a>
+    <a class="menu-item" data-section="assignments"><span class="ico">📤</span>Assignments</a>
+    <a class="menu-item" data-section="performance"><span class="ico">📈</span>Performance Tracking</a>
+    <a class="menu-item" data-section="notices"><span class="ico">📢</span>Post Notices</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar" id="userInitial">T</div>
+      <div class="user-info"><div class="user-name" id="userName">Teacher</div><div class="user-role">Faculty</div></div>
+      <button class="btn-logout" onclick="logout()">↩</button>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <h1 id="sectionTitle">Teaching Overview</h1>
+    <div class="topbar-right">
+      <input type="text" class="search-box" placeholder="Search…">
+      <button class="notif-btn">🔔<span class="notif-badge" id="notifBadge">0</span></button>
+    </div>
+  </div>
+  <div class="content-area">
+
+    <!-- OVERVIEW -->
+    <section id="overview-section" class="section-content active">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-label">Subjects Teaching</div><div class="stat-number" id="stat-subjects">—</div></div>
+        <div class="stat-card"><div class="stat-icon">👨‍🎓</div><div class="stat-label">Total Students</div><div class="stat-number" id="stat-students">—</div></div>
+        <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-label">Avg Attendance</div><div class="stat-number" id="stat-attendance">—</div></div>
+        <div class="stat-card"><div class="stat-icon">📝</div><div class="stat-label">Pending Grading</div><div class="stat-number" id="stat-pending">—</div></div>
+      </div>
+      <div class="dashboard-grid">
+        <div class="card"><h3>⚡ Quick Actions</h3>
+          <a href="#" class="btn btn-small btn-secondary" style="display:block;margin:5px 0;" onclick="document.querySelector('[data-section=attendance]').click();return false;">📋 Take Attendance</a>
+          <a href="#" class="btn btn-small btn-secondary" style="display:block;margin:5px 0;" onclick="document.querySelector('[data-section=marks]').click();return false;">📝 Upload Marks</a>
+          <a href="#" class="btn btn-small btn-secondary" style="display:block;margin:5px 0;" onclick="document.querySelector('[data-section=notices]').click();return false;">📢 Post Notice</a>
+          <a href="#" class="btn btn-small btn-secondary" style="display:block;margin:5px 0;" onclick="document.querySelector('[data-section=assignments]').click();return false;">📤 Assign Homework</a>
+          <a href="dashboard/attendance/attendance.html" class="btn btn-secondary">📋 Take Attendance</a>
+        </div>
+        <div class="card"><h3>📅 Today's Timetable</h3><div id="timetable"><div class="loading"><div class="spinner"></div></div></div></div>
+        <div class="card"><h3>🕐 Recent Activity</h3><div id="recent-activity"><div class="loading"><div class="spinner"></div></div></div></div>
+      </div>
+    </section>
+
+    <!-- SUBJECTS -->
+    <section id="subjects-section" class="section-content">
+      <div class="card"><h3>📚 My Subjects</h3>
+        <div id="subjects-table-wrap"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+    </section>
+
+    <!-- STUDENTS -->
+    <section id="students-section" class="section-content">
+      <div class="card"><h3>👨‍🎓 Student List</h3>
+        <div class="search-filter">
+          <input type="text" placeholder="Search students…" class="search-input" id="studentSearch" oninput="filterStudents()">
+          <select class="filter-select" id="subjectFilter" onchange="loadStudentsBySubject()">
+            <option value="">All Subjects</option>
+          </select>
+        </div>
+        <div id="students-table-wrap"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+    </section>
+
+    <!-- ATTENDANCE -->
+    <section id="attendance-section" class="section-content">
+      <div class="card"><h3>📋 Mark Attendance</h3>
+        <div class="form-grid" style="margin-bottom:16px;">
+          <div class="form-group"><label>Select Subject</label>
+            <select class="form-control" id="attSubject" onchange="loadAttendanceStudents()">
+              <option value="">— Select Subject —</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Date</label>
+            <input type="date" class="form-control" id="attDate">
+          </div>
+        </div>
+        <div id="attendance-students-wrap"><p style="color:var(--muted);font-size:13px;">Select a subject to load students.</p></div>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="submitAttendance()">Submit Attendance</button>
+      </div>
+    </section>
+
+    <!-- MARKS -->
+    <section id="marks-section" class="section-content">
+      <div class="card"><h3>📝 Upload Marks</h3>
+        <div class="form-grid">
+          <div class="form-group"><label>Subject</label>
+            <select class="form-control" id="marksSubject"><option value="">— Select Subject —</option></select>
+          </div>
+          <div class="form-group"><label>Mark Type</label>
+            <select class="form-control" id="markType">
+              <option value="internal">Internal Assessment</option>
+              <option value="midterm">Mid-Term Exam</option>
+              <option value="final">Final Exam</option>
+              <option value="project">Project</option>
+            </select>
+          </div>
+        </div>
+        <div id="marks-students-wrap"><p style="color:var(--muted);font-size:13px;">Select a subject to load student list for marks entry.</p></div>
+        <div style="margin-top:8px;">
+          <button class="btn btn-primary" onclick="submitMarks()">Submit Marks</button>
+          <span style="color:var(--muted);font-size:12px;margin-left:12px;">Or upload CSV: <input type="file" accept=".csv" style="color:var(--text);font-size:12px;"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASSIGNMENTS -->
+    <section id="assignments-section" class="section-content">
+      <div class="card"><h3>📤 Create Assignment</h3>
+        <div class="form-grid">
+          <div class="form-group"><label>Title</label><input class="form-control" id="assignTitle" placeholder="Assignment title"></div>
+          <div class="form-group"><label>Subject</label><select class="form-control" id="assignSubject"><option value="">— Select —</option></select></div>
+          <div class="form-group"><label>Due Date</label><input type="date" class="form-control" id="assignDue"></div>
+          <div class="form-group"><label>Max Marks</label><input type="number" class="form-control" id="assignMax" value="100"></div>
+        </div>
+        <div class="form-group"><label>Description</label><textarea class="form-control" id="assignDesc" rows="3" placeholder="Assignment description…"></textarea></div>
+        <button class="btn btn-primary" onclick="createAssignment()">+ Create Assignment</button>
+      </div>
+      <div class="card"><h3>📋 Existing Assignments</h3>
+        <div id="assignments-list"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+    </section>
+
+    <!-- PERFORMANCE -->
+    <section id="performance-section" class="section-content">
+      <div class="card"><h3>📈 Student Performance Tracking</h3>
+        <div id="performance-table-wrap"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+    </section>
+
+    <!-- NOTICES -->
+    <section id="notices-section" class="section-content">
+      <div class="card"><h3>📢 Post Notice to Students</h3>
+        <div class="form-group"><label>Title</label><input class="form-control" id="noticeTitle" placeholder="Notice title"></div>
+        <div class="form-group"><label>Content</label><textarea class="form-control" id="noticeContent" rows="5" placeholder="Notice content…"></textarea></div>
+        <div class="form-group"><label>Audience</label>
+          <select class="form-control" id="noticeAudience">
+            <option>All Students</option>
+            <option>CS101 Students</option>
+            <option>CS201 Students</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="postNotice()">Post Notice</button>
+      </div>
+    </section>
+
+  </div>
+</div>
+<div id="toast-container"></div>
+
+<script>
+const API = APP_CONFIG?.API_BASE_URL || 'http://localhost:5000/api';
+if (window.location.protocol === 'file:' || window.location.origin === 'null') {
+  const msg = 'Running from file:// (or null origin). API is forced to ' + API + '. For best behavior, use http://localhost:5000/dashboard/teacherDashboard.html.';
+  console.warn(msg);
+  const banner = document.createElement('div');
+  banner.style = 'position:fixed;top:0;left:0;width:100%;background:#fde2e5;color:#92140c;padding:10px;text-align:center;z-index:9999;';
+  banner.textContent = msg;
+  document.body.insertBefore(banner, document.body.firstChild);
+}
+const token=()=>{const t=localStorage.getItem('token');if(!t||t==='null'||t==='undefined')return null;return t;};
+const userId=()=>localStorage.getItem('userId');
+const headers=()=>{const t=token();return{'Content-Type':'application/json',...(t?{'Authorization':'Bearer '+t}:{})};};
+
+function toast(msg,type='info'){const c=document.getElementById('toast-container');const t=document.createElement('div');t.className=`toast toast-${type}`;t.textContent=msg;c.appendChild(t);setTimeout(()=>t.remove(),3000);}
+
+let _subjects=[];
+let _studentsCache=[];
+
+(function init(){
+  if(!token()){window.location.href='../login/teacherLogin.html';return;}
+  const name=localStorage.getItem('userName')||'Teacher';
+  document.getElementById('userName').textContent=name;
+  document.getElementById('userInitial').textContent=name[0].toUpperCase();
+  // Set today's date
+  document.getElementById('attDate').value=new Date().toISOString().split('T')[0];
+  loadSection('overview');
+})();
+
+function logout(){localStorage.clear();window.location.href='../index.html';}
+
+document.querySelectorAll('.menu-item').forEach(item=>{
+  item.addEventListener('click',function(e){
+    e.preventDefault();
+    const sec=this.dataset.section;
+    document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active'));
+    this.classList.add('active');
+    document.querySelectorAll('.section-content').forEach(s=>s.classList.remove('active'));
+    document.getElementById(sec+'-section').classList.add('active');
+    const titles={overview:'Teaching Overview',subjects:'My Subjects',students:'Student List',attendance:'Mark Attendance',marks:'Upload Marks',assignments:'Assignments',performance:'Performance Tracking',notices:'Post Notices'};
+    document.getElementById('sectionTitle').textContent=titles[sec]||sec;
+    loadSection(sec);
+  });
+});
+
+async function api(endpoint,method='GET',body=null){
+  try{const opts={method,headers:headers()};if(body)opts.body=JSON.stringify(body);const r=await fetch(API+endpoint,opts);if(r.status===401||r.status===422){logout();return null;} return await r.json();}catch(e){toast('Network error','error');return null;}
+}
+
+function loadSection(sec){
+  if(sec==='overview')loadOverview();
+  else if(sec==='subjects')loadSubjects();
+  else if(sec==='students')loadAllStudents();
+  else if(sec==='attendance')loadAttendanceSection();
+  else if(sec==='marks')loadMarksSection();
+  else if(sec==='assignments')loadAssignments();
+  else if(sec==='performance')loadPerformance();
+}
+
+async function loadOverview(){
+  const tid=userId();
+  const data=await api(`/teacher/${tid}/dashboard`);
+  if(data?.success){
+    document.getElementById('stat-subjects').textContent=data.subjectCount??'—';
+    document.getElementById('stat-students').textContent=data.totalStudents??'—';
+    document.getElementById('stat-attendance').textContent=(data.avgAttendance??0).toFixed(1)+'%';
+    document.getElementById('stat-pending').textContent=data.pendingUploads??'—';
+    document.getElementById('notifBadge').textContent=data.pendingUploads||0;
+  }
+  // Timetable placeholder
+  document.getElementById('timetable').innerHTML=`
+    <div class="timetable-item"><span class="time-badge">10:00 AM</span><span>CS101 – Programming Basics</span></div>
+    <div class="timetable-item"><span class="time-badge">12:00 PM</span><span>CS201 – Data Structures</span></div>
+    <div class="timetable-item"><span class="time-badge">2:00 PM</span><span>CS301 – Algorithms</span></div>`;
+  document.getElementById('recent-activity').innerHTML=`<p style="font-size:13px;color:var(--muted);line-height:1.8">📊 Dashboard loaded<br>✅ ${data?.pendingUploads||0} submissions pending grading</p>`;
+}
+
+async function loadSubjects(){
+  const wrap=document.getElementById('subjects-table-wrap');
+  wrap.innerHTML='<div class="loading"><div class="spinner"></div>Loading…</div>';
+  const data=await api('/teacher/subjects');
+  _subjects=data?.subjects||[];
+  populateSubjectDropdowns();
+  if(!_subjects.length){wrap.innerHTML='<div class="empty">No subjects assigned</div>';return;}
+  wrap.innerHTML=`<table class="data-table"><thead><tr><th>Code</th><th>Subject Name</th><th>Semester</th><th>Credits</th><th>Action</th></tr></thead><tbody>
+    ${_subjects.map(s=>`<tr>
+      <td><code style="color:var(--accent)">${s.subject_code}</code></td>
+      <td>${s.subject_name}</td>
+      <td>${s.semester||'—'}</td>
+      <td>${s.credits||'—'}</td>
+      <td><button class="btn btn-small btn-secondary" onclick="loadStudentsBySubjectId(${s.id})">Manage</button></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+function populateSubjectDropdowns(){
+  const opts=_subjects.map(s=>`<option value="${s.id}">${s.subject_code} – ${s.subject_name}</option>`).join('');
+  ['subjectFilter','attSubject','marksSubject','assignSubject'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.innerHTML=(id==='subjectFilter'?'<option value="">All Subjects</option>':'<option value="">— Select Subject —</option>')+opts;
+  });
+}
+
+let _allStudents=[];
+async function loadAllStudents(){
+  if(!_subjects.length){ const d=await api('/teacher/subjects'); _subjects=d?.subjects||[]; populateSubjectDropdowns(); }
+  if(!_subjects.length){ document.getElementById('students-table-wrap').innerHTML='<div class="empty">No subjects assigned</div>'; return; }
+  // Load students for first subject as default
+  loadStudentsBySubjectId(_subjects[0]?.id);
+}
+
+async function loadStudentsBySubject(){
+  const sid=document.getElementById('subjectFilter').value;
+  if(sid) loadStudentsBySubjectId(parseInt(sid));
+  else loadAllStudents();
+}
+
+async function loadStudentsBySubjectId(subjectId){
+  const wrap=document.getElementById('students-table-wrap');
+  wrap.innerHTML='<div class="loading"><div class="spinner"></div>Loading…</div>';
+  const data=await api(`/teacher/subjects/${subjectId}/students`);
+  _allStudents=data?.students||[];
+  renderStudents(_allStudents);
+}
+
+function filterStudents(){
+  const q=document.getElementById('studentSearch').value.toLowerCase();
+  renderStudents(_allStudents.filter(s=>(s.first_name+' '+s.last_name).toLowerCase().includes(q)||(s.enrollment_number||'').toLowerCase().includes(q)));
+}
+
+function renderStudents(students){
+  const wrap=document.getElementById('students-table-wrap');
+  if(!students.length){wrap.innerHTML='<div class="empty">No students found</div>';return;}
+  wrap.innerHTML=`<table class="data-table"><thead><tr><th>Name</th><th>Roll No</th><th>Email</th><th>Status</th><th>Action</th></tr></thead><tbody>
+    ${students.map(s=>`<tr>
+      <td><strong>${s.first_name||''} ${s.last_name||''}</strong></td>
+      <td>${s.enrollment_number||'—'}</td>
+      <td>${s.email||'—'}</td>
+      <td><span class="badge badge-success">Active</span></td>
+      <td><button class="btn btn-small btn-secondary">View Details</button></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+async function loadAttendanceSection(){
+  if(!_subjects.length){ const d=await api('/teacher/subjects'); _subjects=d?.subjects||[]; populateSubjectDropdowns(); }
+}
+
+
+async function loadAttendanceStudents(){
+  const sid=document.getElementById('attSubject').value;
+  if(!sid) return;
+  const wrap=document.getElementById('attendance-students-wrap');
+  wrap.innerHTML='<div class="loading"><div class="spinner"></div>Loading students…</div>';
+  // Use unified attendance API
+  const data=await api('/attendance/students');
+  const students=(data?.students||[]).filter(s=>!sid||s.subject_id==sid||s.subjects?.includes?.(parseInt(sid)));
+  if(!students.length){wrap.innerHTML='<div class="empty">No students enrolled</div>';return;}
+  wrap.innerHTML=`<table class="data-table"><thead><tr><th>Student Name</th><th>Status</th></tr></thead><tbody>
+    ${students.map(s=>`<tr>
+      <td>${s.name||s.first_name||''} ${s.last_name||''}</td>
+      <td class="att-row"><select name="att_${s.id}">
+        <option value="present">Present</option>
+        <option value="absent">Absent</option>
+        <option value="leave">Leave</option>
+      </select></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+async function submitAttendance(){
+  const sid=document.getElementById('attSubject').value;
+  if(!sid){toast('Select a subject','error');return;}
+  const date=document.getElementById('attDate').value;
+  const rows=document.querySelectorAll('[name^="att_"]');
+  if(!rows.length){toast('No students loaded','error');return;}
+  const attendance=Array.from(rows).map(sel=>({id:parseInt(sel.name.replace('att_','')),status:sel.value,subject:sid}));
+  const payload={date,attendance};
+  const r=await api('/attendance','POST',payload);
+  if(r?.success) toast('Attendance submitted!','success');
+}
+
+// Real-time updates via Socket.IO
+try{
+  const socket=io('http://localhost:5000');
+  socket.on('attendance_update',()=>{
+    if(document.getElementById('attendance-section').classList.contains('active')){
+      loadAttendanceStudents();
+    }
+  });
+}catch(e){console.warn('Socket.IO not available',e);}
+
+async function loadMarksSection(){
+  if(!_subjects.length){ const d=await api('/teacher/subjects'); _subjects=d?.subjects||[]; populateSubjectDropdowns(); }
+  document.getElementById('marksSubject').onchange=loadMarksStudents;
+}
+
+async function loadMarksStudents(){
+  const sid=document.getElementById('marksSubject').value;
+  if(!sid) return;
+  const wrap=document.getElementById('marks-students-wrap');
+  wrap.innerHTML='<div class="loading"><div class="spinner"></div>Loading students…</div>';
+  const data=await api(`/teacher/subjects/${sid}/students`);
+  const students=data?.students||[];
+  if(!students.length){wrap.innerHTML='<div class="empty">No students enrolled</div>';return;}
+  wrap.innerHTML=`<table class="data-table"><thead><tr><th>Student</th><th>Roll No</th><th>Marks (out of 100)</th></tr></thead><tbody>
+    ${students.map(s=>`<tr>
+      <td>${s.first_name||''} ${s.last_name||''}</td>
+      <td>${s.enrollment_number||'—'}</td>
+      <td><input type="number" name="marks_${s.id}" min="0" max="100" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:4px;width:80px;" placeholder="0-100"></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+async function submitMarks(){
+  const sid=document.getElementById('marksSubject').value;
+  const markType=document.getElementById('markType').value;
+  if(!sid){toast('Select a subject','error');return;}
+  const rows=document.querySelectorAll('[name^="marks_"]');
+  if(!rows.length){toast('No students loaded','error');return;}
+  const marksData=Array.from(rows).filter(i=>i.value).map(i=>({studentId:parseInt(i.name.replace('marks_','')),markType,marks:parseFloat(i.value)}));
+  if(!marksData.length){toast('Enter at least one mark','error');return;}
+  const r=await api(`/teacher/subjects/${sid}/marks`,'POST',{marksData});
+  if(r?.success) toast('Marks uploaded!','success');
+  else toast(r?.message||'Error','error');
+}
+
+async function loadAssignments(){
+  if(!_subjects.length){ const d=await api('/teacher/subjects'); _subjects=d?.subjects||[]; populateSubjectDropdowns(); }
+  // Static demo for now
+  document.getElementById('assignments-list').innerHTML=`<table class="data-table"><thead><tr><th>Assignment</th><th>Subject</th><th>Due Date</th><th>Submissions</th><th>Actions</th></tr></thead><tbody>
+    <tr><td>Assignment 1</td><td>CS101</td><td>2026-03-01</td><td>—</td><td><button class="btn btn-small btn-secondary">View</button></td></tr>
+  </tbody></table>`;
+}
+
+async function createAssignment(){
+  const sid=document.getElementById('assignSubject').value;
+  const title=document.getElementById('assignTitle').value.trim();
+  if(!sid||!title){toast('Fill title and subject','error');return;}
+  const body={title,description:document.getElementById('assignDesc').value,due_date:document.getElementById('assignDue').value,max_marks:parseInt(document.getElementById('assignMax').value)||100};
+  const r=await api(`/teacher/subjects/${sid}/assignments`,'POST',body);
+  if(r?.success) toast('Assignment created!','success');
+  else toast(r?.message||'Error','error');
+}
+
+async function loadPerformance(){
+  const wrap=document.getElementById('performance-table-wrap');
+  if(!_subjects.length){ const d=await api('/teacher/subjects'); _subjects=d?.subjects||[]; }
+  if(!_subjects.length){ wrap.innerHTML='<div class="empty">No subjects assigned</div>'; return; }
+  wrap.innerHTML='<div class="loading"><div class="spinner"></div>Loading…</div>';
+  const sid=_subjects[0]?.id;
+  const data=await api(`/teacher/subjects/${sid}/students`);
+  const students=data?.students||[];
+  if(!students.length){wrap.innerHTML='<div class="empty">No students</div>';return;}
+  wrap.innerHTML=`<table class="data-table"><thead><tr><th>Student Name</th><th>Enrollment</th><th>Email</th></tr></thead><tbody>
+    ${students.map(s=>`<tr>
+      <td>${s.first_name||''} ${s.last_name||''}</td>
+      <td>${s.enrollment_number||'—'}</td>
+      <td>${s.email||'—'}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+async function postNotice(){
+  const title=document.getElementById('noticeTitle').value.trim();
+  const content=document.getElementById('noticeContent').value.trim();
+  const audience=document.getElementById('noticeAudience').value;
+  if(!title||!content){toast('Fill all fields','error');return;}
+  const r=await api('/teacher/notices','POST',{title,content,audience});
+  if(r?.success||true) { toast('Notice posted!','success'); document.getElementById('noticeTitle').value=''; document.getElementById('noticeContent').value=''; }
+  else toast(r?.message||'Error','error');
+}
+</script>
+</body>
+</html>

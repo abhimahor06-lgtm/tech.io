@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard – Poornima University</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --surface2: #21262d;
+    --border: #30363d; --accent: #f78166; --accent2: #79c0ff;
+    --green: #56d364; --yellow: #e3b341; --red: #f85149;
+    --text: #e6edf3; --muted: #8b949e; --white: #ffffff;
+    --sidebar-w: 240px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+
+  /* SIDEBAR */
+  .sidebar { width: var(--sidebar-w); background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; }
+  .sidebar-logo { padding: 20px 16px; border-bottom: 1px solid var(--border); }
+  .sidebar-logo h2 { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; color: var(--accent); letter-spacing: .5px; }
+  .sidebar-logo span { font-size: 11px; color: var(--muted); }
+  .sidebar-nav { padding: 8px 0; flex: 1; }
+  .menu-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; font-size: 13.5px; color: var(--muted); cursor: pointer; border-radius: 6px; margin: 2px 8px; transition: all .2s; text-decoration: none; }
+  .menu-item:hover { background: var(--surface2); color: var(--text); }
+  .menu-item.active { background: rgba(247,129,102,.12); color: var(--accent); font-weight: 600; }
+  .menu-item .ico { font-size: 16px; width: 20px; text-align: center; }
+  .sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border); }
+  .user-chip { display: flex; align-items: center; gap: 10px; }
+  .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #fff; flex-shrink: 0; }
+  .user-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+  #imageUpload{display:none;}
+  .user-info { flex: 1; min-width: 0; }
+  .profile-dropdown{
+position:absolute;
+bottom:60px;
+left:0;
+width:220px;
+background:#2a2a2a;
+border-radius:12px;
+padding:10px;
+display:none;
+flex-direction:column;
+gap:8px;
+animation:fade .25s;
+}
+
+.profile-top{
+display:flex;
+gap:10px;
+align-items:center;
+}
+
+.avatar-small{
+width:35px;
+height:35px;
+border-radius:50%;
+background:#ff7a00;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.dropdown-item{
+padding:8px;
+border-radius:6px;
+cursor:pointer;
+}
+
+.dropdown-item:hover{
+background:#3a3a3a;
+}
+
+.logout{
+color:#f7f7f7;
+}
+
+@keyframes fade{
+from{opacity:0;transform:translateY(10px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+#imageUpload{
+display:none;
+}
+  .user-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-role { font-size: 11px; color: var(--muted); }
+  .btn-logout { font-size: 12px; color: var(--white); cursor: pointer; background: none; border: none; font-family: inherit; }
+
+  /* MAIN */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar { height: 56px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; flex-shrink: 0; }
+  .topbar h1 { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .search-box { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 6px; font-size: 13px; font-family: inherit; width: 220px; outline: none; }
+  .search-box:focus { border-color: var(--accent2); }
+  .notif-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; position: relative; }
+  .notif-badge { position: absolute; top: -4px; right: -4px; background: var(--red); color: #fff; font-size: 10px; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+  /* CONTENT */
+  .content-area { flex: 1; overflow-y: auto; padding: 24px; }
+  .section-content { display: none; }
+  .section-content.active { display: block; }
+
+  /* STATS GRID */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 8px; transition: border-color .2s; }
+  .stat-card:hover { border-color: var(--accent); }
+  .stat-icon { font-size: 24px; }
+  .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; font-weight: 600; }
+  .stat-number { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: var(--white); }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  .card h3 { font-size: 15px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .dashboard-grid .card { margin: 0; }
+
+  /* TABLE */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .data-table th { text-align: left; padding: 10px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+  .data-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tbody tr:hover { background: rgba(255,255,255,.03); }
+
+  /* BADGES */
+  .badge { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge-success { background: rgba(86,211,100,.15); color: var(--green); }
+  .badge-warning { background: rgba(227,179,65,.15); color: var(--yellow); }
+  .badge-danger { background: rgba(248,81,73,.15); color: var(--red); }
+  .badge-info { background: rgba(121,192,255,.15); color: var(--accent2); }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; transition: all .15s; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { opacity: .85; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-success { background: rgba(86,211,100,.15); color: var(--green); border: 1px solid rgba(86,211,100,.3); font-size: 12px; padding: 5px 10px; }
+  .btn-success:hover { background: rgba(86,211,100,.25); }
+  .btn-danger { background: rgba(248,81,73,.15); color: var(--red); border: 1px solid rgba(248,81,73,.3); font-size: 12px; padding: 5px 10px; }
+  .btn-danger:hover { background: rgba(248,81,73,.25); }
+  .btn-small { font-size: 12px; padding: 5px 10px; }
+
+  /* SEARCH FILTER */
+  .search-filter { display: flex; gap: 10px; margin-bottom: 16px; }
+  .search-input, .filter-select { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 6px; font-size: 13px; font-family: inherit; outline: none; }
+  .search-input:focus, .filter-select:focus { border-color: var(--accent2); }
+  .search-input { flex: 1; }
+  .filter-select option { background: var(--surface2); }
+
+  /* ANALYTICS */
+  .analytics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .analytics-item { background: var(--surface2); border-radius: 10px; padding: 16px; text-align: center; }
+  .analytics-item h4 { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+  .highlight { font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700; color: var(--accent2); }
+
+  /* AI INSIGHTS */
+  .ai-card { background: linear-gradient(135deg, rgba(121,192,255,.08) 0%, rgba(247,129,102,.08) 100%); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 12px; }
+  .ai-card p { margin: 8px 0; font-size: 14px; line-height: 1.6; }
+
+  /* SETTINGS */
+  .settings-group { display: flex; flex-direction: column; gap: 14px; }
+  .settings-group label { display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer; }
+  .settings-group input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--accent); }
+
+  /* LOG VIEWER */
+  .log-viewer { background: #0d1117; border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-family: monospace; font-size: 12px; line-height: 1.8; color: var(--green); max-height: 320px; overflow-y: auto; }
+  .log-viewer p { margin: 2px 0; }
+
+  /* LOADING */
+  .loading { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--muted); gap: 10px; }
+  .spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .empty { text-align: center; padding: 40px; color: var(--muted); font-size: 13px; }
+
+  /* TOAST */
+  #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+  .toast { padding: 12px 18px; border-radius: 8px; font-size: 13.5px; font-weight: 500; color: #fff; animation: slideIn .3s ease; box-shadow: 0 4px 16px rgba(0,0,0,.4); }
+  .toast-success { background: #1a7f37; }
+  .toast-error { background: #b91c1c; }
+  .toast-info { background: #1d4ed8; }
+  @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+  .form-control { width: 100%; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 9px 12px; border-radius: 6px; font-size: 13.5px; font-family: inherit; outline: none; }
+  .form-control:focus { border-color: var(--accent2); }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h2>👑 Admin Panel</h2>
+    <span>Poornima University</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="menu-item active" data-section="overview"><span class="ico">📊</span>Overview</a>
+    <a class="menu-item" data-section="approvals"><span class="ico">✅</span>Approvals</a>
+    <a class="menu-item" data-section="users"><span class="ico">👥</span>Users Management</a>
+    <a class="menu-item" data-section="departments"><span class="ico">🏢</span>Departments</a>
+    <a class="menu-item" data-section="subjects"><span class="ico">📚</span>Subjects</a>
+    <a class="menu-item" data-section="analytics"><span class="ico">📈</span>Analytics</a>
+    <a class="menu-item" data-section="ai-insights"><span class="ico">🤖</span>AI Insights</a>
+    <a class="menu-item" data-section="system"><span class="ico">🔧</span>System Settings</a>
+    <a class="menu-item" data-section="logs"><span class="ico">📋</span>Server Logs</a>
+    <a class="menu-item" data-section="backup"><span class="ico">💾</span>Backup Control</a>
+  </nav>
+  <div class="sidebar-footer">
+
+  <div class="user-chip" onclick="toggleProfileMenu()">
+
+    <div class="user-avatar" id="userAvatar">
+      <span id="userInitial">A</span>
+    </div>
+
+    <input type="file" id="imageUpload" accept="image/*">
+
+    <div class="user-info">
+      <div class="username" id="userName">Admin</div>
+      <div class="user-role">Administrator</div>
+    </div>
+    <script src="../js/ad.js"></script>
+
+  </div>
+
+
+  <!-- PROFILE DROPDOWN -->
+  <div class="profile-dropdown" id="profileDropdown">
+
+      <div class="profile-top">
+          <div class="avatar-small">A</div>
+          <div>
+              <div class="username" id="userName">Admin</div>
+              <div class="fullname" id="fullName">@admin001</div>
+          </div>
+      </div>
+
+      <hr>
+
+      <div class="dropdown-item">⭐ Upgrade Plan</div>
+      <div class="dropdown-item">🎨 Personalization</div>
+      <div class="dropdown-item">⚙ Settings</div>
+
+      <hr>
+
+      <div class="dropdown-item">❓ Help</div>
+      <div class="dropdown-item logout" onclick="logout()">🚪 Log out</div>
+
+  </div>
+
+</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <h1 id="sectionTitle">Dashboard Overview</h1>
+    <div class="topbar-right">
+      <input type="text" class="search-box" placeholder="Search..." id="searchBox">
+      <button class="notif-btn">🔔<span class="notif-badge" id="notifBadge">0</span></button>
+    </div>
+  </div>
+
+  <div class="content-area">
+    <!-- OVERVIEW -->
+    <section id="overview-section" class="section-content active">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon">👨‍🎓</div><div class="stat-label">Total Students</div><div class="stat-number" id="stat-students">—</div></div>
+        <div class="stat-card"><div class="stat-icon">👨‍🏫</div><div class="stat-label">Total Teachers</div><div class="stat-number" id="stat-teachers">—</div></div>
+        <div class="stat-card"><div class="stat-icon">🧑‍💼</div><div class="stat-label">Total HODs</div><div class="stat-number" id="stat-hods">—</div></div>
+        <div class="stat-card"><div class="stat-icon">🏢</div><div class="stat-label">Departments</div><div class="stat-number" id="stat-depts">—</div></div>
+      </div>
+      <div class="dashboard-grid">
+        <div class="card"><h3>⏳ Pending Approvals</h3><div id="overview-approvals"><div class="loading"><div class="spinner"></div>Loading…</div></div></div>
+        <div class="card"><h3>🖥️ System Status</h3><div id="system-status"><p style="color:var(--green)">✓ Online</p><p style="margin-top:8px;color:var(--muted);font-size:13px">Database: Checking…</p></div></div>
+        <div class="card"><h3>📝 Recent Activities</h3><div id="recent-activities"><div class="loading"><div class="spinner"></div>Loading…</div></div></div>
+      </div>
+    </section>
+
+    <!-- APPROVALS -->
+    <section id="approvals-section" class="section-content">
+      <div class="card">
+        <h3>✅ Pending Registration Approvals</h3>
+        <div id="approvals-table-wrap"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+    </section>
+
+    <!-- USERS -->
+    <section id="users-section" class="section-content">
+      <div class="card">
+        <h3>👥 User Management</h3>
+        <div class="search-filter">
+          <input type="text" placeholder="Search users…" class="search-input" id="userSearch" oninput="filterUsers()">
+          <select class="filter-select" id="roleFilter" onchange="loadUsers()">
+            <option value="">All Roles</option>
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+            <option value="hod">HOD</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div id="users-table-wrap"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+    </section>
+
+    <!-- DEPARTMENTS -->
+    <section id="departments-section" class="section-content">
+      <div class="card">
+        <h3>🏢 Department Management</h3>
+        <div style="display:flex;gap:10px;margin-bottom:16px;align-items:center;">
+          <button class="btn btn-primary" onclick="showAddDeptModal()">+ New Department</button>
+        </div>
+        <div id="departments-table-wrap"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+      <!-- Add Dept Form -->
+      <div class="card" id="add-dept-form" style="display:none;">
+        <h3>➕ Add New Department</h3>
+        <div class="form-group"><label>Department Name</label><input class="form-control" id="newDeptName" placeholder="e.g. Computer Science"></div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button class="btn btn-primary" onclick="createDepartment()">Create</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('add-dept-form').style.display='none'">Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUBJECTS -->
+    <section id="subjects-section" class="section-content">
+      <div class="card">
+        <h3>📚 Subject Management</h3>
+        <div style="margin-bottom:16px;"><button class="btn btn-primary" onclick="showAddSubjectForm()">+ New Subject</button></div>
+        <div id="subjects-table-wrap"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+      <div class="card" id="add-subject-form" style="display:none;">
+        <h3>➕ Add Subject</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group"><label>Subject Code</label><input class="form-control" id="newSubCode" placeholder="CS101"></div>
+          <div class="form-group"><label>Subject Name</label><input class="form-control" id="newSubName" placeholder="Introduction to Programming"></div>
+          <div class="form-group"><label>Department</label><input class="form-control" id="newSubDept" placeholder="Engineering"></div>
+          <div class="form-group"><label>Credits</label><input class="form-control" type="number" id="newSubCredits" value="3"></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button class="btn btn-primary" onclick="createSubject()">Create</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('add-subject-form').style.display='none'">Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANALYTICS -->
+    <section id="analytics-section" class="section-content">
+      <div class="card">
+        <h3>📈 System Analytics</h3>
+        <div class="analytics-grid" id="analytics-grid">
+          <div class="analytics-item"><h4>Average Attendance</h4><p class="highlight" id="avg-attendance">—</p></div>
+          <div class="analytics-item"><h4>Average GPA</h4><p class="highlight" id="avg-gpa">—</p></div>
+          <div class="analytics-item"><h4>Dropout Rate</h4><p class="highlight" id="dropout-rate">—</p></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>� Attendance Trend</h3>
+        <canvas id="attendanceChart" height="120" style="max-width:100%;"></canvas>
+      </div>
+      <div class="card">
+        <h3>🟢 Attendance Flow (Today)</h3>
+        <div id="attendance-flow-widget"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+      <div class="card">
+        <h3>�📊 Institution Summary</h3>
+        <div class="analytics-grid">
+          <div class="analytics-item"><h4>Total Students</h4><p class="highlight" id="a-students">—</p></div>
+          <div class="analytics-item"><h4>Total Teachers</h4><p class="highlight" id="a-teachers">—</p></div>
+          <div class="analytics-item"><h4>Active Courses</h4><p class="highlight" id="a-courses">—</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI INSIGHTS -->
+    <section id="ai-insights-section" class="section-content">
+      <div class="card"><h3>🤖 AI-Powered Insights</h3>
+        <div id="ai-insights-content"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+    </section>
+
+    <!-- SYSTEM -->
+    <section id="system-section" class="section-content">
+      <div class="card"><h3>🔧 System Settings</h3>
+        <div class="settings-group">
+          <label><input type="checkbox" name="emailNotifications" checked> Enable Email Notifications</label>
+          <label><input type="checkbox" name="apiAccess" checked> Enable API Access</label>
+          <label><input type="checkbox" name="maintenanceMode"> Maintenance Mode</label>
+        </div>
+        <button class="btn btn-primary" style="margin-top:20px;" onclick="saveSettings()">Save Settings</button>
+      </div>
+    </section>
+
+    <!-- LOGS -->
+    <section id="logs-section" class="section-content">
+      <div class="card"><h3>📋 Server Logs</h3>
+        <div class="log-viewer" id="log-viewer"><div class="loading" style="color:var(--green)"><div class="spinner" style="border-top-color:var(--green)"></div>Loading logs…</div></div>
+        <button class="btn btn-secondary" style="margin-top:12px;" onclick="loadLogs()">🔄 Refresh</button>
+      </div>
+    </section>
+
+    <!-- BACKUP -->
+    <section id="backup-section" class="section-content">
+      <div class="card"><h3>💾 Backup Management</h3>
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:14px;">
+          <p><strong>Last Backup:</strong> <span id="last-backup">Loading…</span></p>
+          <p><strong>Status:</strong> <span class="badge badge-success">✓ Completed</span></p>
+          <p><strong>Size:</strong> 2.5 GB</p>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px;">
+          <button class="btn btn-primary" onclick="toast('Backup started…','info')">Create Backup Now</button>
+          <button class="btn btn-secondary" onclick="toast('Restore initiated…','info')">Restore Backup</button>
+        </div>
+      </div>
+    </section>
+  </div><!-- content-area -->
+</div><!-- main -->
+
+<div id="toast-container"></div>
+
+<script src="../js/chart.umd.min.js"></script>
+<script>
+  // Ensure Chart.js is loaded; if not, use a minimal no-op fallback to keep the dashboard functional.
+  if (typeof Chart === 'undefined') {
+    console.warn('Chart.js not available; using stubbed Chart implementation.');
+    window.Chart = class {
+      constructor(ctx, config) {
+        this.ctx = ctx;
+        this.data = config?.data || { labels: [], datasets: [] };
+        this.options = config?.options || {};
+      }
+      update() { /* no-op */ }
+    };
+  }
+</script>
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+<script src="../js/config.js"></script>
+<script>  
+const API = APP_CONFIG?.API_BASE_URL || 'http://localhost:5000/api';
+if (window.location.protocol === 'file:' || window.location.origin === 'null') {
+  const msg = 'Running from file:// (or null origin). API is forced to ' + API + '. Use http://localhost:5000/dashboard/adminDashboard.html for full support.';
+  console.warn(msg);
+  const warning = document.createElement('div');
+  warning.style = 'position:fixed;top:0;left:0;right:0;z-index:9999;padding:10px;background:#f8d7da;color:#721c24;font-weight:700;text-align:center;';
+  warning.textContent = msg;
+  document.body.appendChild(warning);
+}
+
+// helper to safely read/store token, treat the string 'null' or 'undefined' as missing
+const token = () => {
+  const t = localStorage.getItem('token');
+  if (!t || t === 'null' || t === 'undefined') return null;
+  return t;
+};
+const userId = () => localStorage.getItem('userId');
+const headers = () => {
+  const t = token();
+  return {
+    'Content-Type': 'application/json',
+    ...(t ? { 'Authorization': 'Bearer ' + t } : {})
+  };
+};
+
+// websocket connection
+let socket = null;
+function initSocket() {
+    try {
+        const base = API_BASE.replace('/api','');
+        socket = io(base, { 
+            transports:['websocket','polling'],
+            reconnection:true,
+            reconnectionDelay:1000,
+            reconnectionAttempts:5
+        });
+        socket.on('connect', () => {
+            console.log('✓ Socket connected');
+            toast('Connected to live updates','success');
+        });
+        socket.on('disconnect', () => console.warn('Socket disconnected'));
+        socket.on('connect_error', (e) => console.error('Socket error:', e));
+        socket.on('notification', data => {
+            let msg = 'Event';
+            if (data.type === 'new_user') msg = 'New registration pending approval';
+            else if (data.message) msg = data.message;
+            else msg = JSON.stringify(data);
+            toast('🔔 '+msg,'info');
+            setTimeout(pollNotifications, 500);
+        });
+        socket.on('user_update', data => {
+            toast(`User ${data.id} ${data.action}`,'info');
+            loadUsers(); loadApprovals();
+        });
+        socket.on('attendance_update', data => {
+            console.log('Attendance updated:', data);
+            // Reload attendance data if on analytics page
+            if (document.getElementById('analytics-section').classList.contains('active')) {
+                loadAttendanceData();
+            }
+        });
+    } catch(e) { console.warn('Socket init fallback:', e); }
+}
+
+// TOAST
+function toast(msg, type='info') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+// AUTH CHECK
+(function init() {
+  if (!token()) { window.location.href = '../login/adminLogin.html'; return; }
+  const name = localStorage.getItem('userName') || 'Admin';
+  document.getElementById('userName').textContent = name;
+  document.getElementById('userInitial').textContent = name[0].toUpperCase();
+  loadSection('overview');
+})();
+
+function logout() {
+  localStorage.clear();
+  window.location.href = '../index.html';
+}
+
+// NAVIGATION
+document.querySelectorAll('.menu-item').forEach(item => {
+  item.addEventListener('click', function(e) {
+    e.preventDefault();
+    const sec = this.dataset.section;
+    document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+    this.classList.add('active');
+    document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+    document.getElementById(sec+'-section').classList.add('active');
+    const titles = { overview:'Dashboard Overview', approvals:'Pending Approvals', users:'User Management', departments:'Department Management', subjects:'Subject Management', analytics:'System Analytics', 'ai-insights':'AI Insights', system:'System Settings', logs:'Server Logs', backup:'Backup Control' };
+    document.getElementById('sectionTitle').textContent = titles[sec] || sec;
+    loadSection(sec);
+    // load chart when analytics section becomes visible
+    if (sec === 'analytics') setTimeout(() => loadAttendanceData(), 100);
+  });
+});
+
+async function api(endpoint, method='GET', body=null) {
+  // debug token each time; remove when stable
+  console.debug('API request', endpoint, 'token=', token());
+  try {
+    const opts = { method, headers: headers() };
+    if (body) opts.body = JSON.stringify(body);
+    const r = await fetch(API_BASE + endpoint, opts);
+    if (r.status === 401 || r.status === 422) { logout(); return null; }
+    const json = await r.json();
+    if (!r.ok) console.warn(`API ${endpoint}:`, r.status, json);
+    return json;
+  } catch(e) { console.error('API error:', e); toast('Network error','error'); return null; }
+}
+
+function loadSection(sec) {
+  if (sec==='overview') loadOverview();
+  else if (sec==='approvals') loadApprovals();
+  else if (sec==='users') loadUsers();
+  else if (sec==='departments') loadDepartments();
+  else if (sec==='subjects') loadSubjects();
+  else if (sec==='analytics') loadAnalytics();
+  else if (sec==='ai-insights') loadAIInsights();
+  else if (sec==='logs') loadLogs();
+  else if (sec==='backup') { document.getElementById('last-backup').textContent = new Date().toLocaleDateString(); }
+}
+
+// OVERVIEW
+async function loadOverview() {
+  // unified endpoint returns stats + pending count
+  const dash = await api('/admin/dashboard');
+  if (!dash) {
+    toast('Failed to load dashboard data - network error', 'error');
+    return;
+  }
+  if (!dash.success) {
+    toast(dash.message || 'Error loading dashboard data', 'error');
+    return;
+  }
+  document.getElementById('stat-students').textContent = dash.totalStudents ?? '—';
+  document.getElementById('stat-teachers').textContent = dash.totalTeachers ?? '—';
+  document.getElementById('stat-hods').textContent = dash.totalHods ?? '—';
+  document.getElementById('stat-depts').textContent = dash.totalDepartments ?? '—';
+  document.getElementById('a-students').textContent = dash.totalStudents ?? '—';
+  document.getElementById('a-teachers').textContent = dash.totalTeachers ?? '—';
+  document.getElementById('a-courses').textContent = dash.totalDepartments ?? '—';
+  const wrap = document.getElementById('overview-approvals');
+  if (dash.pendingUsers) {
+    const bd = dash.pendingBreakdown || {};
+    const breakdown = (bd.students || bd.teachers || bd.hods) ? `${bd.students||0} students · ${bd.teachers||0} teachers · ${bd.hods||0} HODs` : `${dash.pendingUsers} total pending`;
+    wrap.innerHTML = `<p style="font-size:22px;font-weight:700;color:var(--yellow)">${dash.pendingUsers}</p><p style="color:var(--muted);font-size:13px;margin-top:4px">${breakdown}</p><button class="btn btn-small btn-secondary" style="margin-top:12px;" onclick="document.querySelector('[data-section=approvals]').click()">Review All</button>`;
+    document.getElementById('notifBadge').textContent = dash.pendingUsers;
+  } else { wrap.innerHTML = '<p style="color:var(--green);font-size:13px;">✓ No pending approvals</p>'; }
+  // recent activities pulled from logs for live feed
+  const logData = await api('/admin/logs');
+  let activityHtml = '<p style="font-size:13px;color:var(--muted);line-height:2">📌 Stats loaded</p>';
+  if (logData?.logs?.length) {
+    const last = logData.logs.slice(-5);
+    activityHtml += last.map(l => `<p style="font-size:13px;color:var(--muted);line-height:1.6">• ${l}</p>`).join('');
+  }
+  document.getElementById('recent-activities').innerHTML = activityHtml;
+}
+
+// APPROVALS
+async function loadApprovals() {
+  const wrap = document.getElementById('approvals-table-wrap');
+  wrap.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
+  const data = await api('/admin/pending-approvals');
+  if (!data?.approvals?.length) { wrap.innerHTML = '<div class="empty">No pending approvals</div>'; return; }
+  wrap.innerHTML = `<table class="data-table"><thead><tr><th>Username</th><th>Role</th><th>Email</th><th>Status</th><th>Action</th></tr></thead><tbody>
+    ${data.approvals.map(u=>`<tr>
+      <td>${u.username||'—'}</td>
+      <td><span class="badge badge-info">${u.role}</span></td>
+      <td>${u.email||'—'}</td>
+      <td><span class="badge badge-${u.status==='approved'?'success':u.status==='pending'?'warning':'danger'}">${u.status}</span></td>
+      <td style="display:flex;gap:6px;">
+        <button class="btn btn-success" onclick="approveUser('${u.role}',${u.id})">✓ Approve</button>
+        <button class="btn btn-danger" onclick="rejectUser('${u.role}',${u.id})">✗ Reject</button>
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+async function approveUser(role, id) {
+  // use correct endpoint with role
+  const r = await api(`/admin/approve-user/${role}/${id}`, 'POST');
+  if (r?.success) { toast('User approved!','success'); loadApprovals(); loadOverview(); }
+  else toast(r?.message||'Error','error');
+}
+async function rejectUser(role, id) {
+  if (!confirm('Reject and delete this user?')) return;
+  const r = await api(`/admin/reject-user/${role}/${id}`, 'POST');
+  if (r?.success) { toast('User rejected','success'); loadApprovals(); loadOverview(); }
+  else toast(r?.message||'Error','error');
+}
+
+// USERS
+let _usersCache = [];
+async function loadUsers() {
+  const wrap = document.getElementById('users-table-wrap');
+  wrap.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
+  const role = document.getElementById('roleFilter').value;
+  const endpoint = role ? `/admin/users?role=${role}` : '/admin/users';
+  const data = await api(endpoint);
+  _usersCache = data?.users || [];
+  renderUsers(_usersCache);
+}
+function filterUsers() {
+  const q = document.getElementById('userSearch').value.toLowerCase();
+  renderUsers(_usersCache.filter(u => (u.username||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q)));
+}
+function renderUsers(users) {
+  const wrap = document.getElementById('users-table-wrap');
+  if (!users.length) { wrap.innerHTML = '<div class="empty">No users found</div>'; return; }
+  wrap.innerHTML = `<table class="data-table"><thead><tr><th>Username</th><th>Role</th><th>Email</th><th>Status</th><th>Action</th></tr></thead><tbody>
+    ${users.map(u=>`<tr>
+      <td>${u.username||'—'}</td>
+      <td><span class="badge badge-info">${u.role}</span></td>
+      <td>${u.email||'—'}</td>
+      <td><span class="badge badge-${u.status==='approved'?'success':u.status==='pending'?'warning':'danger'}">${u.status}</span></td>
+      <td><button class="btn btn-danger btn-small" onclick="deleteUserConfirm(${u.id})">Delete</button></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+async function deleteUserConfirm(id) {
+  if (!confirm('Delete this user permanently?')) return;
+  const r = await api(`/admin/users/${id}`, 'DELETE');
+  if (r?.success) { toast('User deleted','success'); loadUsers(); }
+  else toast(r?.message||'Error','error');
+}
+
+// DEPARTMENTS
+async function loadDepartments() {
+  const wrap = document.getElementById('departments-table-wrap');
+  wrap.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
+  const data = await api('/admin/departments');
+  if (!data?.departments?.length) { wrap.innerHTML = '<div class="empty">No departments found</div>'; return; }
+  wrap.innerHTML = `<table class="data-table"><thead><tr><th>Department</th><th>HOD</th><th>Actions</th></tr></thead><tbody>
+    ${data.departments.map(d=>`<tr>
+      <td><strong>${d.name}</strong></td>
+      <td>${d.hod||'Not Assigned'}</td>
+      <td><button class="btn btn-small btn-secondary">Edit</button></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+function showAddDeptModal() { document.getElementById('add-dept-form').style.display='block'; }
+async function createDepartment() {
+  const name = document.getElementById('newDeptName').value.trim();
+  if (!name) { toast('Enter department name','error'); return; }
+  const r = await api('/admin/departments', 'POST', { name });
+  if (r?.success) { toast('Department created!','success'); document.getElementById('newDeptName').value=''; document.getElementById('add-dept-form').style.display='none'; loadDepartments(); }
+  else toast(r?.message||'Error','error');
+}
+
+// SUBJECTS
+async function loadSubjects() {
+  const wrap = document.getElementById('subjects-table-wrap');
+  wrap.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
+  const data = await api('/admin/subjects');
+  if (!data?.subjects?.length) { wrap.innerHTML = '<div class="empty">No subjects found</div>'; return; }
+  wrap.innerHTML = `<table class="data-table"><thead><tr><th>Code</th><th>Subject Name</th><th>Department</th><th>Credits</th><th>Actions</th></tr></thead><tbody>
+    ${data.subjects.map(s=>`<tr>
+      <td><code style="color:var(--accent2)">${s.subject_code}</code></td>
+      <td>${s.subject_name}</td>
+      <td>${s.department||'—'}</td>
+      <td>${s.credits||'—'}</td>
+      <td><button class="btn btn-small btn-secondary">Edit</button></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+function showAddSubjectForm() { document.getElementById('add-subject-form').style.display='block'; }
+async function createSubject() {
+  const body = { subjectCode: document.getElementById('newSubCode').value, subjectName: document.getElementById('newSubName').value, department: document.getElementById('newSubDept').value, credits: parseInt(document.getElementById('newSubCredits').value)||3 };
+  if (!body.subjectCode || !body.subjectName) { toast('Fill all fields','error'); return; }
+  const r = await api('/admin/subjects', 'POST', body);
+  if (r?.success) { toast('Subject created!','success'); document.getElementById('add-subject-form').style.display='none'; loadSubjects(); }
+  else toast(r?.message||'Error','error');
+}
+
+// ANALYTICS
+async function loadAnalytics() {
+  const data = await api('/admin/analytics');
+  if (data?.success) {
+    document.getElementById('avg-attendance').textContent = (data.avgAttendance||0)+'%';
+    document.getElementById('avg-gpa').textContent = parseFloat(data.avgGPA||0).toFixed(2);
+    document.getElementById('dropout-rate').textContent = (data.dropoutRate||0)+'%';
+    document.getElementById('a-students').textContent = data.totalStudents||'—';
+    document.getElementById('a-teachers').textContent = data.totalTeachers||'—';
+  }
+}
+
+// AI INSIGHTS
+async function loadAIInsights() {
+  const wrap = document.getElementById('ai-insights-content');
+  wrap.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
+  const data = await api('/admin/ai-insights');
+  if (data?.success) {
+    wrap.innerHTML = `
+      <div class="ai-card"><p>🤖 <strong>At-Risk Students:</strong> System has identified <span style="color:var(--red);font-weight:700">${data.atRisk}</span> students at risk of dropout</p></div>
+      <div class="ai-card"><p>📈 <strong>Top Performers:</strong> <span style="color:var(--green);font-weight:700">${data.topPerformers}</span> students with high marks (above 80)</p></div>
+      <div class="ai-card"><p>⚠️ <strong>Low Attendance:</strong> <span style="color:var(--yellow);font-weight:700">${data.lowAttendance}</span> students with attendance below 75%</p></div>`;
+  } else { wrap.innerHTML = '<div class="empty">Could not load AI insights</div>'; }
+}
+
+// LOGS
+async function loadLogs() {
+  const viewer = document.getElementById('log-viewer');
+  viewer.innerHTML = '<div class="loading" style="color:var(--green)"><div class="spinner" style="border-top-color:var(--green)"></div>Loading…</div>';
+  const data = await api('/admin/logs');
+  if (data?.logs?.length) {
+    viewer.innerHTML = data.logs.map(l=>`<p>${l}</p>`).join('');
+    viewer.scrollTop = viewer.scrollHeight;
+  } else { viewer.innerHTML = '<p>[No logs available]</p>'; }
+}
+
+// SETTINGS
+async function saveSettings() {
+  toast('Settings saved!','success');
+}
+
+// --------- Real-time charts & notifications --------
+let attendanceChart = null;
+let lastNotifCount = 0;
+
+async function loadAttendanceData() {
+    try {
+        const canvas = document.getElementById('attendanceChart');
+        if (!canvas) return; // canvas not in DOM yet
+        const data = await api('/admin/attendance');
+        if (!data?.records || data.records.length === 0) return;
+        const labels = data.records.map(r=>r.date).reverse();
+        const present = data.records.map(r=>r.present||0).reverse();
+        const absent = data.records.map(r=>r.absent||0).reverse();
+        const ctx = canvas.getContext('2d');
+        if (attendanceChart) {
+            attendanceChart.data.labels = labels;
+            attendanceChart.data.datasets[0].data = present;
+            attendanceChart.data.datasets[1].data = absent;
+            attendanceChart.update();
+        } else {
+            attendanceChart = new Chart(ctx, {
+                type:'line',
+                data:{
+                    labels,
+                    datasets:[
+                        { label:'Present', data:present, borderColor:'#56d364', fill:false, tension:0.3 },
+                        { label:'Absent', data:absent, borderColor:'#f85149', fill:false, tension:0.3 }
+                    ]
+                },
+                options:{
+                    responsive:true,
+                    maintainAspectRatio:true,
+                    plugins:{ legend:{ position:'top' } },
+                    scales:{ y:{ beginAtZero:true } }
+                }
+            });
+        }
+    } catch(e) { console.warn('Chart error:', e); }
+}
+
+async function pollNotifications() {
+    const pending = await api('/admin/pending-approvals');
+    const count = pending?.approvals?.length || 0;
+    if (count > lastNotifCount) {
+        toast(`${count - lastNotifCount} new registrations pending`, 'info');
+    }
+    lastNotifCount = count;
+    document.getElementById('notifBadge').textContent = count;
+}
+
+function setupAutoRefresh() {
+    setInterval(() => {
+        const sec = document.querySelector('.menu-item.active').dataset.section;
+        if (sec === 'overview') loadOverview();
+        if (sec === 'analytics') { loadAnalytics(); loadAttendanceData(); }
+        if (sec === 'ai-insights') loadAIInsights();
+        pollNotifications();
+    }, 30000); // every 30 seconds
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initSocket();
+    setupAutoRefresh();
+    pollNotifications();
+    // load overview on init
+    loadSection('overview');
+});
+</script>
+<script src="../js/dashboard.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/auth.js"></script>
+
+</body>
+</html>

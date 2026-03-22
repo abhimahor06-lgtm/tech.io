@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOD Login</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="/js/chat-widget.js" defer></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <h1>🎓 Poornima University</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html" class="nav-link">Home</a></li>
+                <li><a href="role-selection.html" class="nav-link">Back</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="auth-section">
+        <div class="auth-container auth-form-container">
+            <div class="auth-header">
+                <div class="role-header-icon">🧑‍💼</div>
+                <h2>HOD Login</h2>
+                <p>Enter your credentials to access the HOD dashboard</p>
+            </div>
+
+            <form id="hodLoginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="hodUsername">Username or Email</label>
+                    <input type="text" id="hodUsername" name="username" required placeholder="Enter your username or email">
+                </div>
+
+                <div class="form-group">
+                    <label for="hodPassword">Password</label>
+                    <input type="password" id="hodPassword" name="password" required placeholder="Enter your password">
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox">
+                        <input type="checkbox" name="remember">
+                        Remember me
+                    </label>
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+            </form>
+
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="../register/hodReg.html">Register here</a></p>
+                <p><a href="role-selection.html">← Back to role selection</a></p>
+            </div>
+        </div>
+    </section>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        document.getElementById('hodLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            await handleLogin('hod', this);
+        });
+    </script>
+</body>
+</html>
