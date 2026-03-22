@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Registration</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/chat-widget.js" defer></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <h1>🎓 Poornima University</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html" class="nav-link">Home</a></li>
+                <li><a href="registration-selection.html" class="nav-link">Back</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="auth-section">
+        <div class="auth-container auth-form-container">
+            <div class="auth-header">
+                <div class="role-header-icon">👨‍🏫</div>
+                <h2>Teacher Registration</h2>
+                <p>Create your faculty account</p>
+            </div>
+
+            <form id="teacherRegForm" class="auth-form">
+                <h4 style="margin-top: 20px; margin-bottom: 15px;">Personal Information</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" name="firstName" required placeholder="First Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" name="lastName" required placeholder="Last Name">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required placeholder="email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="Phone Number">
+                    </div>
+                </div>
+
+                <h4 style="margin-top: 20px; margin-bottom: 15px;">Professional Information</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="employeeId">Employee ID *</label>
+                        <input type="text" id="employeeId" name="employeeId" required placeholder="Employee ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="department">Department *</label>
+                        <select id="department" name="department" required>
+                            <option value="">Select Department</option>
+                            <option value="engineering">Engineering</option>
+                            <option value="science">Science</option>
+                            <option value="commerce">Commerce</option>
+                            <option value="humanities">Humanities</option>
+                            <option value="law">Law</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="qualification">Qualification *</label>
+                        <input type="text" id="qualification" name="qualification" required placeholder="e.g., M.Tech, M.Sc">
+                    </div>
+                    <div class="form-group">
+                        <label for="specialization">Specialization *</label>
+                        <input type="text" id="specialization" name="specialization" required placeholder="Your specialization">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="experience">Years of Experience <span style="font-size:12px;color:var(--muted)">(optional)</span></label>
+                    <input type="number" id="experience" name="experience" min="0" placeholder="Years of experience">
+                </div>
+
+                <h4 style="margin-top: 20px; margin-bottom: 15px;">Account Details</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="username">Username *</label>
+                        <input type="text" id="username" name="username" required placeholder="Choose a username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password *</label>
+                        <input type="password" id="password" name="password" required placeholder="Strong password">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password *</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm your password">
+                </div>
+
+                <label class="checkbox">
+                    <input type="checkbox" name="agreeTerms" required>
+                    I agree to the terms and conditions (Status: Pending Approval)
+                </label>
+
+                <button type="submit" class="btn btn-primary btn-block">Register as Teacher</button>
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+            </form>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="../login/teacherLogin.html">Login here</a></p>
+                <p><a href="registration-selection.html">← Back to role selection</a></p>
+            </div>
+        </div>
+    </section>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        document.getElementById('teacherRegForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            await handleRegistration('teacher', this);
+        });
+    </script>
+</body>
+</html>

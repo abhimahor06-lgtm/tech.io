@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="/js/chat-widget.js" defer></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <h1>🎓 Poornima University</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html" class="nav-link">Home</a></li>
+                <li><a href="registration-selection.html" class="nav-link">Back</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="auth-section">
+        <div class="auth-container auth-form-container">
+            <div class="auth-header">
+                <div class="role-header-icon">👑</div>
+                <h2>Administrator Registration</h2>
+                <p>Create your admin account</p>
+            </div>
+
+            <form id="adminRegForm" class="auth-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="adminId">Admin ID *</label>
+                        <input type="text" id="adminId" name="adminId" required placeholder="Admin ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" name="firstName" required placeholder="First Name">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" name="lastName" required placeholder="Last Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="officialEmail">Official Email *</label>
+                        <input type="email" id="officialEmail" name="officialEmail" required placeholder="official@email.com">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="accessLevel">Access Level *</label>
+                        <select id="accessLevel" name="accessLevel" required>
+                            <option value="">Select Access Level</option>
+                            <option value="admin">Admin</option>
+                            <option value="super">Super Admin</option>
+                            <option value="full">Full Admin</option>
+                            <option value="limited">Limited Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="Phone Number">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="securityPin">Security PIN *</label>
+                        <input type="password" id="securityPin" name="securityPin" required placeholder="4-digit PIN">
+                    </div>
+                    <div class="form-group">
+                        <label for="adminUsername">Username *</label>
+                        <input type="text" id="adminUsername" name="username" required placeholder="Choose a username">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="adminPassword">Password *</label>
+                    <input type="password" id="adminPassword" name="password" required placeholder="Strong password">
+                    <small>Password must be at least 8 characters with uppercase, lowercase, numbers, and symbols</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password *</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm your password">
+                </div>
+
+                <label class="checkbox">
+                    <input type="checkbox" name="agreeTerms" required>
+                    I agree to the terms and conditions
+                </label>
+
+                <button type="submit" class="btn btn-primary btn-block">Register as Admin</button>
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+            </form>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="../login/adminLogin.html">Login here</a></p>
+                <p><a href="registration-selection.html">← Back to role selection</a></p>
+            </div>
+        </div>
+    </section>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        document.getElementById('adminRegForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            await handleRegistration('admin', this);
+        });
+    </script>
+</body>
+</html>

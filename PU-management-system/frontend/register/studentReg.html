@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="/js/chat-widget.js" defer></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <h1>🎓 Poornima University</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html" class="nav-link">Home</a></li>
+                <li><a href="registration-selection.html" class="nav-link">Back</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="auth-section">
+        <div class="auth-container auth-form-container">
+            <div class="auth-header">
+                <div class="role-header-icon">👨‍🎓</div>
+                <h2>Student Registration</h2>
+                <p>Create your student account</p>
+            </div>
+
+            <form id="studentRegForm" class="auth-form">
+                <h4 style="margin-top: 20px; margin-bottom: 15px;">Personal Information</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" name="firstName" required placeholder="First Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" name="lastName" required placeholder="Last Name">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required placeholder="email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="Phone Number">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dob">Date of Birth *</label>
+                        <input type="date" id="dob" name="dob" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Gender *</label>
+                        <select id="gender" name="gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h4 style="margin-top: 20px; margin-bottom: 15px;">Academic Information</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="enrollmentNumber">Enrollment Number *</label>
+                        <input type="text" id="enrollmentNumber" name="enrollmentNumber" required placeholder="Enrollment Number">
+                    </div>
+                    <div class="form-group">
+                        <label for="program">Program *</label>
+                        <select id="program" name="program" required>
+                            <option value="">Select Program</option>
+                            <option value="btech">B.Tech (4 years)</option>
+                            <option value="bsc">B.Sc (3 years)</option>
+                            <option value="bcom">B.Com (3 years)</option>
+                            <option value="bba">BBA (3 years)</option>
+                            <option value="llb">LLB (3 years)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="department">Department *</label>
+                        <select id="department" name="department" required>
+                            <option value="">Select Department</option>
+                            <option value="engineering">Engineering</option>
+                            <option value="science">Science</option>
+                            <option value="commerce">Commerce</option>
+                            <option value="humanities">Humanities</option>
+                            <option value="law">Law</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="semester">Current Semester *</label>
+                        <select id="semester" name="semester" required>
+                            <option value="">Select Semester</option>
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                            <option value="3">Semester 3</option>
+                            <option value="4">Semester 4</option>
+                            <option value="5">Semester 5</option>
+                            <option value="6">Semester 6</option>
+                            <option value="7">Semester 7</option>
+                            <option value="8">Semester 8</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h4 style="margin-top: 20px; margin-bottom: 15px;">Documents <span style="font-size:12px;color:var(--muted)">(optional)</span></h4>
+                <div class="form-group">
+                    <label for="idProof">ID Proof (Aadhar/Passport)</label>
+                    <input type="file" id="idProof" name="idProof" accept=".pdf,.jpg,.jpeg,.png">
+                    <small>Max size: 5MB (PDF, JPG, PNG) – can be uploaded later from profile</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="qualifying">Qualifying Exam Certificate</label>
+                    <input type="file" id="qualifying" name="qualifying" accept=".pdf,.jpg,.jpeg,.png">
+                    <small>10+2 or equivalent certificate (optional)</small>
+                </div>
+
+                <h4 style="margin-top: 20px; margin-bottom: 15px;">Account Details</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="username">Username *</label>
+                        <input type="text" id="username" name="username" required placeholder="Choose a username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password *</label>
+                        <input type="password" id="password" name="password" required placeholder="Strong password">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password *</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm your password">
+                </div>
+
+                <label class="checkbox">
+                    <input type="checkbox" name="agreeTerms" required>
+                    I agree to the terms and conditions (Status: Pending Approval)
+                </label>
+
+                <button type="submit" class="btn btn-primary btn-block">Register as Student</button>
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+            </form>
+
+            <div class="auth-footer">
+                <p>Already have an account? <a href="../login/studentLogin.html">Login here</a></p>
+                <p><a href="registration-selection.html">← Back to role selection</a></p>
+            </div>
+        </div>
+    </section>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        document.getElementById('studentRegForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            await handleRegistration('student', this);
+        });
+    </script>
+</body>
+</html>

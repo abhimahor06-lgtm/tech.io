@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Dashboard – Poornima University</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;--accent:#ffa657;--accent2:#56d364;--blue:#79c0ff;--purple:#d2a8ff;--yellow:#e3b341;--red:#f85149;--text:#e6edf3;--muted:#8b949e;--white:#ffffff;--sidebar-w:240px;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;}
+  .sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+  .sidebar-logo{padding:20px 16px;border-bottom:1px solid var(--border);}
+  .sidebar-logo h2{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--accent);letter-spacing:.5px;}
+  .sidebar-logo span{font-size:11px;color:var(--muted);}
+  .sidebar-nav{padding:8px 0;flex:1;}
+  .menu-item{display:flex;align-items:center;gap:10px;padding:9px 16px;font-size:13.5px;color:var(--muted);cursor:pointer;border-radius:6px;margin:2px 8px;transition:all .2s;text-decoration:none;}
+  .menu-item:hover{background:var(--surface2);color:var(--text);}
+  .menu-item.active{background:rgba(255,166,87,.12);color:var(--accent);font-weight:600;}
+  .menu-item .ico{font-size:16px;width:20px;text-align:center;}
+  .sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);}
+  .user-chip{display:flex;align-items:center;gap:10px;}
+  .user-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--bg);flex-shrink:0;}
+  .user-info{flex:1;min-width:0;}
+  .user-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .user-role{font-size:11px;color:var(--muted);}
+  .btn-logout{font-size:12px;color:var(--red);cursor:pointer;background:none;border:none;font-family:inherit;}
+  .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;}
+  .topbar h1{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;}
+  .topbar-right{display:flex;align-items:center;gap:12px;}
+  .search-box{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;font-size:13px;font-family:inherit;width:200px;outline:none;}
+  .notif-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;position:relative;}
+  .notif-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:10px;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .content-area{flex:1;overflow-y:auto;padding:24px;}
+  .section-content{display:none;}
+  .section-content.active{display:block;}
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:8px;transition:border-color .2s;}
+  .stat-card:hover{border-color:var(--accent);}
+  .stat-icon{font-size:24px;}
+  .stat-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;font-weight:600;}
+  .stat-number{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;color:var(--white);}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;}
+  .card h3{font-size:15px;font-weight:600;margin-bottom:16px;}
+  .dashboard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+  .dashboard-grid .card{margin:0;}
+  .data-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  .data-table th{text-align:left;padding:10px 14px;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border);}
+  .data-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  .data-table tr:last-child td{border-bottom:none;}
+  .data-table tbody tr:hover{background:rgba(255,255,255,.03);}
+  .badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+  .badge-success{background:rgba(86,211,100,.15);color:var(--accent2);}
+  .badge-warning{background:rgba(227,179,65,.15);color:var(--yellow);}
+  .badge-danger{background:rgba(248,81,73,.15);color:var(--red);}
+  .badge-info{background:rgba(121,192,255,.15);color:var(--blue);}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s;}
+  .btn-primary{background:var(--accent);color:var(--bg);}
+  .btn-primary:hover{opacity:.85;}
+  .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+  .btn-small{font-size:12px;padding:5px 10px;}
+  .form-group{margin-bottom:14px;}
+  .form-group label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+  .form-control{width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:6px;font-size:13.5px;font-family:inherit;outline:none;}
+  .form-control:focus{border-color:var(--accent);}
+  .loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--muted);gap:10px;}
+  .spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .empty{text-align:center;padding:40px;color:var(--muted);font-size:13px;}
+  #toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+  .toast{padding:12px 18px;border-radius:8px;font-size:13.5px;font-weight:500;color:#fff;animation:slideIn .3s ease;box-shadow:0 4px 16px rgba(0,0,0,.4);}
+  .toast-success{background:#1a7f37;}.toast-error{background:#b91c1c;}.toast-info{background:#1d4ed8;}
+  @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+  /* Profile */
+  .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .profile-field{background:var(--surface2);border-radius:8px;padding:12px 14px;}
+  .profile-field .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;}
+  .profile-field .val{font-size:14px;font-weight:500;}
+  /* Attendance bar */
+  .progress-bar{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-top:6px;}
+  .progress-fill{height:100%;border-radius:3px;transition:width .5s ease;}
+  /* Notices */
+  .notice-item{border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:10px;transition:border-color .2s;}
+  .notice-item:hover{border-color:var(--accent);}
+  .notice-item h4{font-size:14px;margin-bottom:6px;}
+  .notice-item p{font-size:13px;color:var(--muted);line-height:1.6;}
+  .notice-item small{font-size:11px;color:var(--muted);margin-top:6px;display:block;}
+  /* AI insights */
+  .insight-card{background:linear-gradient(135deg,rgba(255,166,87,.06),rgba(210,168,255,.06));border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px;}
+  .insight-card h4{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+  .insight-card p{font-size:13.5px;color:var(--muted);line-height:1.6;}
+  .gpa-ring{display:flex;flex-direction:column;align-items:center;justify-content:center;width:80px;height:80px;border-radius:50%;border:3px solid var(--accent);background:rgba(255,166,87,.08);font-family:'Space Grotesk',sans-serif;}
+  .gpa-ring .val{font-size:20px;font-weight:700;color:var(--accent);}
+  .gpa-ring .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;}
+</style>
+    <script src="../js/chat-widget.js" defer></script>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h2>👨‍🎓 Student Portal</h2>
+    <span>Poornima University</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="menu-item active" data-section="overview"><span class="ico">📊</span>Dashboard</a>
+    <a class="menu-item" data-section="profile"><span class="ico">👤</span>My Profile</a>
+    <a class="menu-item" data-section="attendance"><span class="ico">📋</span>Attendance</a>
+    <a class="menu-item" data-section="marks"><span class="ico">📝</span>Marks & Grades</a>
+    <a class="menu-item" data-section="subjects"><span class="ico">📚</span>Subjects</a>
+    <a class="menu-item" data-section="assignments"><span class="ico">📤</span>Assignments</a>
+    <a class="menu-item" data-section="exam-schedule"><span class="ico">📅</span>Exam Schedule</a>
+    <a class="menu-item" data-section="notices"><span class="ico">📢</span>Notices</a>
+    <a class="menu-item" data-section="attendance-analytics"><span class="ico">📈</span>Attendance Analytics</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar" id="userInitial">S</div>
+      <div class="user-info"><div class="user-name" id="userName">Student</div><div class="user-role">Student</div></div>
+      <button class="btn-logout" onclick="logout()">↩</button>
+    </div>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <h1 id="sectionTitle">Student Dashboard</h1>
+    <div class="topbar-right">
+      <input type="text" class="search-box" placeholder="Search…">
+      <button class="notif-btn">🔔<span class="notif-badge" id="notifBadge">0</span></button>
+    </div>
+  </div>
+  <div class="content-area">
+
+    <!-- OVERVIEW -->
+    <section id="overview-section" class="section-content active">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-label">Current CGPA</div><div class="stat-number" id="stat-gpa">—</div></div>
+        <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-label">Attendance</div><div class="stat-number" id="stat-att">—</div></div>
+        <div class="stat-card"><div class="stat-icon">📚</div><div class="stat-label">Enrolled Subjects</div><div class="stat-number" id="stat-subjects">—</div></div>
+        <div class="stat-card"><div class="stat-icon">📤</div><div class="stat-label">Assignment Progress</div><div class="stat-number" id="stat-assignments">—</div></div>
+      </div>
+      <div class="dashboard-grid">
+        <div class="card"><h3>🔗 Quick Links</h3>
+          <a href="#" class="btn btn-small btn-secondary" style="display:block;margin:5px 0;" onclick="document.querySelector('[data-section=marks]').click();return false;">📝 View Marks</a>
+          <a href="#" class="btn btn-small btn-secondary" style="display:block;margin:5px 0;" onclick="document.querySelector('[data-section=assignments]').click();return false;">📤 Submit Assignment</a>
+          <a href="#" class="btn btn-small btn-secondary" style="display:block;margin:5px 0;" onclick="document.querySelector('[data-section=notices]').click();return false;">📢 View Notices</a>
+        </div>
+        <div class="card"><h3>🎓 Academic Status</h3>
+          <div id="academic-status"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+        <div class="card"><h3>📊 Recent Marks</h3>
+          <div id="recent-marks"><div class="loading"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="profile-section" class="section-content">
+      <div class="card"><h3>👤 My Profile</h3>
+        <div id="profile-content"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+        <button class="btn btn-primary" style="margin-top:16px;" onclick="toast('Profile editing coming soon!','info')">Edit Profile</button>
+      </div>
+    </section>
+
+    <!-- ATTENDANCE -->
+    <section id="attendance-section" class="section-content">
+      <div class="card"><h3>📋 Attendance Report</h3>
+        <div id="attendance-wrap"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+    </section>
+
+    <!-- MARKS -->
+    <section id="marks-section" class="section-content">
+      <div class="card"><h3>📝 Marks & Grades</h3>
+        <div id="marks-wrap"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+    </section>
+
+    <!-- SUBJECTS -->
+    <section id="subjects-section" class="section-content">
+      <div class="card"><h3>📚 Enrolled Subjects</h3>
+        <div id="subjects-wrap"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+    </section>
+
+    <!-- ASSIGNMENTS -->
+    <section id="assignments-section" class="section-content">
+      <div class="card"><h3>📤 Assignment Submissions</h3>
+        <div id="assignments-wrap"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+      <!-- Submit Form -->
+      <div class="card" id="submit-form" style="display:none;">
+        <h3>📤 Submit Assignment</h3>
+        <div class="form-group"><label>Submission Content / Link</label>
+          <textarea class="form-control" id="submissionContent" rows="5" placeholder="Paste your submission, GitHub link, or description…"></textarea>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-primary" onclick="doSubmitAssignment()">Submit</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('submit-form').style.display='none'">Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAM SCHEDULE -->
+    <section id="exam-schedule-section" class="section-content">
+      <div class="card"><h3>📅 Exam Schedule</h3>
+        <div id="exam-wrap"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+    </section>
+
+    <!-- NOTICES -->
+    <section id="notices-section" class="section-content">
+      <div class="card"><h3>📢 Recent Notices</h3>
+        <div id="notices-wrap"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+    </section>
+
+
+    <!-- ATTENDANCE ANALYTICS -->
+    <section id="attendance-analytics-section" class="section-content">
+      <div class="card"><h3>📈 Attendance Analytics</h3>
+        <div style="margin-bottom:16px;display:flex;gap:12px;align-items:center;">
+          <label for="att-view-mode" style="font-size:13px;">View:</label>
+          <select id="att-view-mode" class="form-control" style="width:auto;">
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+          <input type="date" id="att-date" class="form-control" style="width:auto;">
+        </div>
+        <div id="attendance-analytics-content"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+    </section>
+
+    <!-- AI PREDICTION -->
+    <section id="ai-prediction-section" class="section-content">
+      <div class="card"><h3>🤖 AI-Powered Academic Insights</h3>
+        <div id="ai-content"><div class="loading"><div class="spinner"></div>Analysing your academic data…</div></div>
+      </div>
+    </section>
+
+  </div>
+</div>
+<div id="toast-container"></div>
+
+<script src="../js/config.js"></script>
+<script>
+const API = APP_CONFIG?.API_BASE_URL || 'http://localhost:5000/api';
+if (window.location.protocol === 'file:' || window.location.origin === 'null') {
+  const msg = 'Running from file:// (or null origin). API is forced to ' + API + '. Use http://localhost:5000/dashboard/studentDashboard.html for full support.';
+  console.warn(msg);
+  const warning = document.createElement('div');
+  warning.style = 'position:fixed;top:0;left:0;right:0;z-index:9999;padding:10px;background:#f8d7da;color:#721c24;font-weight:700;text-align:center;';
+  warning.textContent = msg;
+  document.body.appendChild(warning);
+}
+
+// safe token accessor
+const token=()=>{const t=localStorage.getItem('token');if(!t||t==='null'||t==='undefined')return null;return t;};
+const userId=()=>parseInt(localStorage.getItem('userId'));
+const headers=()=>{const t=token();return{'Content-Type':'application/json',...(t?{'Authorization':'Bearer '+t}:{})};};
+
+function toast(msg,type='info'){const c=document.getElementById('toast-container');const t=document.createElement('div');t.className=`toast toast-${type}`;t.textContent=msg;c.appendChild(t);setTimeout(()=>t.remove(),3000);}
+
+let _pendingAssignmentId=null;
+
+(function init(){
+  if(!token()){window.location.href='../login/studentLogin.html';return;}
+  const name=localStorage.getItem('userName')||'Student';
+  document.getElementById('userName').textContent=name;
+  document.getElementById('userInitial').textContent=name[0].toUpperCase();
+  loadSection('overview');
+})();
+
+function logout(){localStorage.clear();window.location.href='../index.html';}
+
+document.querySelectorAll('.menu-item').forEach(item=>{
+  item.addEventListener('click',function(e){
+    e.preventDefault();
+    const sec=this.dataset.section;
+    document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active'));
+    this.classList.add('active');
+    document.querySelectorAll('.section-content').forEach(s=>s.classList.remove('active'));
+    document.getElementById(sec+'-section').classList.add('active');
+    const titles={overview:'Student Dashboard',profile:'My Profile',attendance:'Attendance Report',marks:'Marks & Grades',subjects:'Enrolled Subjects',assignments:'Assignment Submissions','exam-schedule':'Exam Schedule',notices:'Recent Notices','ai-prediction':'AI Academic Insights','attendance-analytics':'Attendance Analytics'};
+    document.getElementById('sectionTitle').textContent=titles[sec]||sec;
+    loadSection(sec);
+  });
+});
+
+async function api(endpoint,method='GET',body=null){
+  try {
+    const opts={method,headers:headers()};
+    if(body) opts.body=JSON.stringify(body);
+    const r=await fetch(API+endpoint,opts);
+
+    if (r.status===401 || r.status===422) {
+      toast('Authentication required. Please login again.','error');
+      logout();
+      return null;
+    }
+
+    if (r.status===404) {
+      toast('API endpoint not found (404). Make sure backend is running and this page is served from http://localhost:5000','error');
+      return null;
+    }
+
+    if (!r.ok) {
+      const text = await r.text();
+      toast(`Server returned ${r.status}: ${text.slice(0,80)}`,'error');
+      return null;
+    }
+
+    return await r.json();
+  } catch(e) {
+    toast('Network error: check backend is running and CORS is allowed','error');
+    return null;
+  }
+}
+
+function fmt(dateStr){if(!dateStr)return'—';return new Date(dateStr).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+function pctColor(p){return p>=75?'var(--accent2)':p>=50?'var(--yellow)':'var(--red)';}
+function pctBarClass(p){return p>=75?'':p>=50?'warn':'danger';}
+
+function loadSection(sec){
+  if(sec==='overview')loadOverview();
+  else if(sec==='profile')loadProfile();
+  else if(sec==='attendance')loadAttendance();
+  else if(sec==='marks')loadMarks();
+  else if(sec==='subjects')loadSubjects();
+  else if(sec==='assignments')loadAssignments();
+  else if(sec==='exam-schedule')loadExamSchedule();
+  else if(sec==='notices')loadNotices();
+  else if(sec==='ai-prediction')loadAIPrediction();
+  else if(sec==='attendance-analytics')loadAttendanceAnalytics();
+}
+
+// OVERVIEW
+async function loadOverview(){
+  const data=await api(`/student/${userId()}/academic`);
+  if(data?.success){
+    const gpa=(data.cgpa||0).toFixed(2);
+    const att=(data.attendance||0).toFixed(1);
+    document.getElementById('stat-gpa').textContent=gpa;
+    document.getElementById('stat-att').textContent=att+'%';
+    document.getElementById('stat-subjects').textContent=data.subjectCount??'—';
+    document.getElementById('stat-assignments').textContent=data.assignmentProgress?data.assignmentProgress+'%':'—';
+    document.getElementById('academic-status').innerHTML=`
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div class="gpa-ring"><div class="val">${gpa}</div><div class="lbl">CGPA</div></div>
+        <div>
+          <p style="font-size:13px;margin-bottom:6px;">📊 Semester: ${data.student?.semester||'—'}</p>
+          <p style="font-size:13px;margin-bottom:6px;color:var(--accent2)">✓ Good Standing</p>
+          <p style="font-size:13px;">🎓 Program: ${data.student?.program||'—'}</p>
+        </div>
+      </div>`;
+  }
+  const marks=await api(`/student/${userId()}/marks`);
+  const mList=marks?.marks||[];
+  if(mList.length){
+    document.getElementById('recent-marks').innerHTML=mList.slice(0,3).map(m=>`
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;">
+        <span>Subject ${m.subject_id}</span>
+        <span style="font-weight:700;color:var(--accent)">${m.total||'—'} <small style="color:var(--muted)">${m.grade||''}</small></span>
+      </div>`).join('');
+  } else { document.getElementById('recent-marks').innerHTML='<p style="color:var(--muted);font-size:13px">No marks available yet.</p>'; }
+  // Notices badge
+  const notices=await api(`/student/${userId()}/notices`);
+  document.getElementById('notifBadge').textContent=(notices?.notices||[]).length;
+}
+
+// PROFILE
+async function loadProfile(){
+  const data=await api(`/student/${userId()}/academic`);
+  const s=data?.student;
+  if(!s){document.getElementById('profile-content').innerHTML='<div class="empty">Profile not found</div>';return;}
+  document.getElementById('profile-content').innerHTML=`<div class="profile-grid">
+    <div class="profile-field"><div class="lbl">Full Name</div><div class="val">${s.first_name||''} ${s.last_name||''}</div></div>
+    <div class="profile-field"><div class="lbl">Roll Number</div><div class="val">${s.enrollment_number||'—'}</div></div>
+    <div class="profile-field"><div class="lbl">Email</div><div class="val">${s.email||'—'}</div></div>
+    <div class="profile-field"><div class="lbl">Program</div><div class="val">${s.program||'—'}</div></div>
+    <div class="profile-field"><div class="lbl">Department</div><div class="val">${s.department||'—'}</div></div>
+    <div class="profile-field"><div class="lbl">Semester</div><div class="val">${s.semester||'—'}</div></div>
+    <div class="profile-field"><div class="lbl">CGPA</div><div class="val" style="color:var(--accent);font-weight:700">${(data.cgpa||0).toFixed(2)}</div></div>
+    <div class="profile-field"><div class="lbl">Status</div><div class="val"><span class="badge badge-success">${s.status||'active'}</span></div></div>
+  </div>`;
+}
+
+// ATTENDANCE
+async function loadAttendance(){
+  const wrap=document.getElementById('attendance-wrap');
+  wrap.innerHTML='<div class="loading"><div class="spinner"></div>Loading…</div>';
+  const data=await api(`/student/${userId()}/attendance`);
+  const att=data?.attendance||[];
+  if(!att.length){wrap.innerHTML='<div class="empty">No attendance records found</div>';return;}
+  const overall=att.reduce((a,s)=>a+(s.percentage||0),0)/att.length;
+  wrap.innerHTML=`
+    <p style="margin-bottom:16px;font-size:14px;"><strong>Overall Attendance:</strong> <span style="color:${pctColor(overall)};font-weight:700">${overall.toFixed(1)}%</span></p>
+    <table class="data-table"><thead><tr><th>Subject</th><th>Total Classes</th><th>Attended</th><th>Percentage</th><th>Status</th></tr></thead><tbody>
+    ${att.map(a=>{const pct=parseFloat(a.percentage||0);return`<tr>
+      <td>Subject ${a.subject_id}</td>
+      <td>${a.total_classes||'—'}</td>
+      <td>${a.attended_classes||'—'}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-weight:600;color:${pctColor(pct)}">${pct.toFixed(1)}%</span>
+          <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:${Math.min(pct,100)}%;background:${pctColor(pct)}"></div></div>
+        </div>
+      </td>
+      <td><span class="badge badge-${pct>=75?'success':pct>=50?'warning':'danger'}">${pct>=75?'Good':pct>=50?'Low':'Critical'}</span></td>
+    </tr>`}).join('')}
+  </tbody></table>`;
+}
+
+// MARKS
+async function loadMarks(){
+  const wrap=document.getElementById('marks-wrap');
+  wrap.innerHTML='<div class="loading"><div class="spinner"></div>Loading…</div>';
+  const data=await api(`/student/${userId()}/marks`);
+  const marks=data?.marks||[];
+  if(!marks.length){wrap.innerHTML='<div class="empty">No marks records found</div>';return;}
+  wrap.innerHTML=`<table class="data-table"><thead><tr><th>Subject</th><th>Internal</th><th>Midterm</th><th>Final</th><th>Total</th><th>Grade</th></tr></thead><tbody>
+    ${marks.map(m=>`<tr>
+      <td>Subject ${m.subject_id}</td>
+      <td>${m.internal||'—'}</td>
+      <td>${m.midterm||'—'}</td>
+      <td>${m.final||'—'}</td>
+      <td><strong>${m.total||'—'}</strong></td>
+      <td><span class="badge badge-${m.grade&&m.grade[0]==='A'?'success':m.grade&&m.grade[0]==='B'?'info':'warning'}">${m.grade||'—'}</span></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// SUBJECTS
+async function loadSubjects(){
+  const wrap=document.getElementById('subjects-wrap');
+  wrap.innerHTML='<div class="loading"><div class="spinner"></div>Loading…</div>';
+  const data=await api(`/student/${userId()}/subjects`);
+  const subjects=data?.subjects||[];
+  if(!subjects.length){wrap.innerHTML='<div class="empty">No enrolled subjects</div>';return;}
+  wrap.innerHTML=`<table class="data-table"><thead><tr><th>Code</th><th>Subject Name</th><th>Instructor</th><th>Credits</th><th>Status</th></tr></thead><tbody>
+    ${subjects.map(s=>`<tr>
+      <td><code style="color:var(--blue)">${s.subject_code}</code></td>
+      <td>${s.subject_name}</td>
+      <td>${s.first_name||''} ${s.last_name||''}</td>
+      <td>${s.credits||'—'}</td>
+      <td><span class="badge badge-success">Active</span></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// ASSIGNMENTS
+async function loadAssignments(){
+  const wrap=document.getElementById('assignments-wrap');
+  wrap.innerHTML='<div class="loading"><div class="spinner"></div>Loading…</div>';
+  const data=await api(`/student/${userId()}/assignments`);
+  const asgns=data?.assignments||[];
+  if(!asgns.length){wrap.innerHTML='<div class="empty">No assignments found</div>';return;}
+  wrap.innerHTML=`<table class="data-table"><thead><tr><th>Subject</th><th>Assignment</th><th>Due Date</th><th>Status</th><th>Action</th></tr></thead><tbody>
+    ${asgns.map(a=>{const isPast=new Date(a.due_date)<new Date();return`<tr>
+      <td>${a.subject_name||'—'}</td>
+      <td>${a.title}</td>
+      <td style="color:${isPast?'var(--red)':'var(--text)'}">${fmt(a.due_date)}</td>
+      <td><span class="badge badge-${isPast?'warning':'info'}">${isPast?'Due':'Upcoming'}</span></td>
+      <td><button class="btn btn-small btn-primary" onclick="openSubmitForm(${a.id})">Upload</button></td>
+    </tr>`}).join('')}
+  </tbody></table>`;
+}
+
+function openSubmitForm(assignmentId){
+  _pendingAssignmentId=assignmentId;
+  document.getElementById('submit-form').style.display='block';
+  document.getElementById('submissionContent').value='';
+  document.getElementById('submit-form').scrollIntoView({behavior:'smooth'});
+}
+
+async function doSubmitAssignment(){
+  if(!_pendingAssignmentId){toast('No assignment selected','error');return;}
+  const content=document.getElementById('submissionContent').value.trim();
+  if(!content){toast('Enter submission content','error');return;}
+  const r=await api(`/student/${userId()}/assignments/${_pendingAssignmentId}/submit`,'POST',{content});
+  if(r?.success){toast('Assignment submitted!','success');document.getElementById('submit-form').style.display='none';_pendingAssignmentId=null;}
+  else toast(r?.message||'Error','error');
+}
+
+// EXAM SCHEDULE
+async function loadExamSchedule(){
+  const wrap=document.getElementById('exam-wrap');
+  wrap.innerHTML='<div class="loading"><div class="spinner"></div>Loading…</div>';
+  const data=await api(`/student/${userId()}/exam-schedule`);
+  const exams=data?.exams||[];
+  if(!exams.length){wrap.innerHTML='<div class="empty">No exam schedule available</div>';return;}
+  wrap.innerHTML=`<table class="data-table"><thead><tr><th>Subject</th><th>Exam Type</th><th>Date</th><th>Time</th><th>Room</th></tr></thead><tbody>
+    ${exams.map(e=>`<tr>
+      <td><strong>${e.subject_name||'—'}</strong><br><code style="font-size:11px;color:var(--blue)">${e.subject_code||''}</code></td>
+      <td><span class="badge badge-info">${e.exam_type||'—'}</span></td>
+      <td>${fmt(e.exam_date)}</td>
+      <td>${e.exam_time||'—'}</td>
+      <td>${e.location||'—'}</td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// NOTICES
+async function loadNotices(){
+  const wrap=document.getElementById('notices-wrap');
+  wrap.innerHTML='<div class="loading"><div class="spinner"></div>Loading…</div>';
+  const data=await api(`/student/${userId()}/notices`);
+  const notices=data?.notices||[];
+  if(!notices.length){wrap.innerHTML='<div class="empty">No notices available</div>';return;}
+  wrap.innerHTML=notices.map(n=>`<div class="notice-item">
+    <h4>📢 ${n.title}</h4>
+    <p>${n.content}</p>
+    <small>Posted: ${fmt(n.posted_date)} ${n.posted_by_role?'· by '+n.posted_by_role:''}</small>
+  </div>`).join('');
+}
+
+// AI PREDICTION
+async function loadAIPrediction(){
+  const wrap=document.getElementById('ai-content');
+  wrap.innerHTML='<div class="loading"><div class="spinner"></div>Analysing your academic data…</div>';
+  const [aiData,academic]=await Promise.all([
+    api(`/student/${userId()}/ai-prediction`),
+    api(`/student/${userId()}/academic`)
+  ]);
+  const risk=aiData?.dropout_risk||'Unknown';
+  const rec=aiData?.recommendation||'Keep up the good work!';
+  const gpa=(academic?.cgpa||0).toFixed(2);
+  const att=(academic?.attendance||0).toFixed(1);
+  const riskColor=risk==='Low'?'var(--accent2)':risk==='Medium'?'var(--yellow)':'var(--red)';
+  wrap.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="insight-card">
+        <h4>📈 Performance Prediction</h4>
+        <p>Based on your current CGPA of <strong style="color:var(--accent)">${gpa}</strong>, you are on a ${parseFloat(gpa)>=3.5?'strong':'steady'} academic trajectory.</p>
+      </div>
+      <div class="insight-card">
+        <h4>⚠️ At-Risk Assessment</h4>
+        <p>Dropout Risk: <strong style="color:${riskColor}">${risk}</strong></p>
+        <p style="margin-top:6px;">${risk==='Low'?'✓ You are doing great!':risk==='Medium'?'⚠️ Some areas need attention.':'🚨 Seek academic support.'}</p>
+      </div>
+      <div class="insight-card">
+        <h4>📊 Attendance Insight</h4>
+        <p>Your current attendance is <strong style="color:${pctColor(parseFloat(att))}">${att}%</strong>. ${parseFloat(att)>=75?'Great attendance! Keep it up.':'You need to improve attendance to stay above 75%.'}</p>
+      </div>
+      <div class="insight-card">
+        <h4>💡 Recommendation</h4>
+        <p>${rec}</p>
+        <ul style="margin-top:8px;padding-left:16px;color:var(--muted);font-size:13px;line-height:1.8">
+          <li>📚 Stay consistent with assignments</li>
+          <li>🎯 Maintain attendance for better results</li>
+          <li>💡 Seek help early if struggling</li>
+        </ul>
+      </div>
+    </div>`;
+}
+</script>
+<script>
+// Attendance Analytics logic
+async function loadAttendanceAnalytics() {
+  const mode = document.getElementById('att-view-mode').value;
+  const date = document.getElementById('att-date').value;
+  const content = document.getElementById('attendance-analytics-content');
+  content.innerHTML = '<div class="loading"><div class="spinner"></div>Loading…</div>';
+  // Placeholder: fetch and render attendance analytics here
+  // TODO: Implement backend API for flexible attendance queries if needed
+  setTimeout(() => {
+    content.innerHTML = `<div style="text-align:center;color:var(--muted);font-size:14px;">Attendance analytics for <b>${mode}</b> view will appear here.</div>`;
+  }, 500);
+}
+document.getElementById('att-view-mode').addEventListener('change', loadAttendanceAnalytics);
+document.getElementById('att-date').addEventListener('change', loadAttendanceAnalytics);
+</script>
+</body>
+</html>

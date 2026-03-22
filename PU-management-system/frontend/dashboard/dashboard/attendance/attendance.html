@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Advanced Attendance System</title>
+
+<link rel="stylesheet" href="attendance.css">
+
+    <script src="../../../js/chat-widget.js" defer></script>
+</head>
+
+<body>
+<script>
+// redirect if not logged in or not teacher/hod
+const _role = localStorage.getItem('userRole');
+if (!localStorage.getItem('token') || (_role !== 'teacher' && _role !== 'hod' && _role !== 'admin')) {
+    window.location.href = '../../login/role-selection.html';
+}
+</script>
+
+<div class="container">
+
+<h1>Student Attendance System</h1>
+
+<div class="top-bar">
+
+<input type="date" id="date">
+
+<input type="text" id="search" placeholder="Search student...">
+
+<button onclick="saveAttendance()">Save Attendance</button>
+
+</div>
+
+<div class="stats">
+
+<div class="card">
+<h3>Total</h3>
+<p id="total">0</p>
+</div>
+
+<div class="card">
+<h3>Present</h3>
+<p id="presentCount">0</p>
+</div>
+
+<div class="card">
+<h3>Absent</h3>
+<p id="absentCount">0</p>
+</div>
+
+</div>
+
+<table>
+
+<thead>
+
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody id="studentTable"></tbody>
+
+</table>
+
+</div>
+
+<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+<!-- core API helpers needed by attendance.js -->
+<script src="../../../js/api.js"></script>
+<script src="attendance.js"></script>
+
+</body>
+</html>
