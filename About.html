@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About — POORNIMA University</title>
+  <link rel="stylesheet" href="sty.css"/>
+  <style>
+    .page-hero {
+      min-height: 55vh; display:flex; align-items:center;
+      padding-top:70px; position:relative; overflow:hidden;
+      background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(0,180,216,0.07) 0%, transparent 70%), var(--space);
+    }
+    .page-hero-content { text-align:center; position:relative; z-index:2; width:100%; }
+    .page-breadcrumb {
+      display:inline-flex; align-items:center; gap:8px;
+      font-family:var(--font-mono); font-size:11px; color:var(--text3);
+      letter-spacing:2px; margin-bottom:20px;
+    }
+    .page-breadcrumb a { color:var(--cyan); text-decoration:none; }
+    .page-title {
+      font-family:var(--font-display); font-size:clamp(48px,7vw,86px);
+      font-weight:700; color:var(--white); line-height:1;
+    }
+    .page-title em { font-style:italic; color:var(--cyan); display:block; }
+
+    /* Mission */
+    .mission { background:var(--deep); }
+    .mission-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+    .mission-visual { position:relative; height:500px; }
+    .mission-big-num {
+      position:absolute; top:0; left:0;
+      font-family:var(--font-display); font-size:220px; font-weight:700;
+      color:rgba(0,229,255,0.04); line-height:1; pointer-events:none;
+      user-select:none;
+    }
+    .mission-cards { position:relative; z-index:1; display:flex; flex-direction:column; gap:16px; }
+    .mission-mini-card {
+      background:var(--card); border:1px solid var(--border);
+      border-radius:14px; padding:20px 24px;
+      display:flex; align-items:center; gap:16px;
+      transition:all 0.3s;
+    }
+    .mission-mini-card:hover { border-color:rgba(0,229,255,0.3); transform:translateX(8px); }
+    .mission-mini-icon { font-size:28px; flex-shrink:0; }
+    .mission-mini-title { font-size:15px; font-weight:600; color:var(--white); }
+    .mission-mini-text  { font-size:13px; color:var(--text3); margin-top:2px; }
+
+    /* Timeline */
+    .timeline-section { background:var(--space); }
+    .timeline { position:relative; max-width:800px; margin:60px auto 0; }
+    .timeline::before {
+      content:''; position:absolute;
+      left:50%; transform:translateX(-50%);
+      top:0; bottom:0; width:1px;
+      background:linear-gradient(to bottom, transparent, var(--border), var(--cyan2), var(--border), transparent);
+    }
+    .timeline-item {
+      display:grid; grid-template-columns:1fr 60px 1fr;
+      gap:20px; align-items:center; margin-bottom:40px;
+    }
+    .timeline-content {
+      background:var(--card); border:1px solid var(--border);
+      border-radius:14px; padding:20px 24px; transition:all 0.3s;
+    }
+    .timeline-content:hover { border-color:rgba(0,229,255,0.3); }
+    .timeline-content.right { grid-column:3; }
+    .timeline-content.left  { grid-column:1; text-align:right; }
+    .timeline-dot {
+      grid-column:2; width:24px; height:24px;
+      border-radius:50%; border:2px solid var(--cyan);
+      background:var(--space); display:flex; align-items:center; justify-content:center;
+      font-size:8px; color:var(--cyan); margin:0 auto; flex-shrink:0;
+    }
+    .timeline-year { font-family:var(--font-mono); font-size:11px; color:var(--cyan); margin-bottom:6px; letter-spacing:2px; }
+    .timeline-title { font-size:15px; font-weight:600; color:var(--white); margin-bottom:4px; }
+    .timeline-text  { font-size:13px; color:var(--text3); line-height:1.6; }
+
+    /* Team */
+    .team { background:var(--deep); }
+    .team-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; margin-top:60px; }
+    .team-card { padding:28px; text-align:center; }
+    .team-avatar {
+      width:80px; height:80px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-family:var(--font-display); font-size:28px; font-weight:700;
+      margin:0 auto 16px; border:2px solid var(--border);
+      transition:all 0.3s;
+    }
+    .team-card:hover .team-avatar { transform:scale(1.1); box-shadow:var(--glow-cyan); }
+    .team-name { font-size:16px; font-weight:600; color:var(--white); margin-bottom:4px; }
+    .team-role { font-size:12px; color:var(--text3); margin-bottom:12px; }
+    .team-dept { font-family:var(--font-mono); font-size:10px; color:var(--cyan); letter-spacing:1px; }
+
+    /* Programs */
+    .programs { background:var(--space); }
+    .programs-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:60px; }
+    .program-card {
+      border-radius:20px; overflow:hidden;
+      position:relative; min-height:280px;
+      display:flex; align-items:flex-end;
+      cursor:none;
+    }
+    .program-bg {
+      position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      font-size:80px; opacity:0.12;
+      transition:opacity 0.3s;
+    }
+    .program-card:hover .program-bg { opacity:0.2; }
+    .program-gradient {
+      position:absolute; inset:0;
+      background:linear-gradient(to top, rgba(4,8,15,0.95) 40%, transparent);
+    }
+    .program-content { position:relative; z-index:1; padding:24px; width:100%; }
+    .program-title { font-size:20px; font-weight:700; color:var(--white); margin-bottom:6px; font-family:var(--font-display); }
+    .program-desc  { font-size:13px; color:var(--text2); margin-bottom:14px; line-height:1.6; }
+    .program-meta  { display:flex; gap:12px; }
+
+    /* Values */
+    .values { background:var(--deep); }
+    .values-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; margin-top:60px; }
+    .value-card { padding:40px; display:flex; gap:24px; }
+    .value-num { font-family:var(--font-mono); font-size:48px; font-weight:700; opacity:0.15; color:var(--cyan); line-height:1; flex-shrink:0; }
+    .value-title { font-size:22px; font-weight:700; color:var(--white); margin-bottom:10px; font-family:var(--font-display); }
+    .value-text  { font-size:14px; color:var(--text3); line-height:1.8; }
+  </style>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">PU</div>
+      <div><span class="nav-logo-text">POORNIMA</span><span class="nav-logo-sub">University</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html" class="active">About</a></li>
+      <li><a href="admission.html">Admission</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="privacy.html">Privacy</a></li>
+      <li><a href="admission.html" class="nav-cta">Apply Now →</a></li>
+    </ul>
+  </nav>
+
+  <button class="chatbot-float-btn" onclick="window.location.href='chatbot.html'">💬 Chat Now</button>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="grid-bg"></div>
+    <div class="glow-orb orb-cyan" style="width:400px;height:400px;top:-100px;left:50%;transform:translateX(-50%);opacity:0.1"></div>
+    <div class="page-hero-content">
+      <div class="container">
+        <div class="page-breadcrumb"><a href="index.html">Home</a> / About</div>
+        <h1 class="page-title">Our <em>Story &amp; Mission</em></h1>
+        <p style="color:var(--text2);font-size:18px;max-width:560px;margin:24px auto 0;line-height:1.8">
+          Founded in 1947. Reimagined for 2026. POORNIMA is where tradition meets transformation.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BANNER -->
+  <section style="background:var(--panel);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:50px 0">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:20px;text-align:center">
+        <div><div class="stat-number">78<span style="font-size:20px">yr</span></div><div style="font-size:13px;color:var(--text3);margin-top:4px">Years of Excellence</div></div>
+        <div><div class="stat-number">42K</div><div style="font-size:13px;color:var(--text3);margin-top:4px">Students</div></div>
+        <div><div class="stat-number">2,400</div><div style="font-size:13px;color:var(--text3);margin-top:4px">Faculty Members</div></div>
+        <div><div class="stat-number">180</div><div style="font-size:13px;color:var(--text3);margin-top:4px">Research Labs</div></div>
+        <div><div class="stat-number">500+</div><div style="font-size:13px;color:var(--text3);margin-top:4px">Global Partners</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISSION -->
+  <section class="mission">
+    <div class="container">
+      <div class="mission-grid">
+        <div>
+          <div class="section-tag">Our Mission</div>
+          <h2 class="section-title">Education That<br/><span>Transforms Lives</span></h2>
+          <p class="section-desc" style="margin-bottom:32px">We believe education is not about degrees — it's about transformation. Every student who walks through our gates leaves as a thinker, an innovator, a changemaker.</p>
+          <p style="color:var(--text3);font-size:15px;line-height:1.8;margin-bottom:32px">Our mission is to provide world-class education that combines timeless academic rigor with cutting-edge technology, fostering environments where the next generation of leaders can grow, question, and ultimately change the world.</p>
+          <a href="admission.html" class="btn btn-primary">Join Our Mission →</a>
+        </div>
+        <div class="mission-visual">
+          <div class="mission-big-num">N</div>
+          <div class="mission-cards anim-float">
+            <div class="mission-mini-card">
+              <div class="mission-mini-icon">🎯</div>
+              <div>
+                <div class="mission-mini-title">Purpose-Driven Learning</div>
+                <div class="mission-mini-text">Every curriculum is designed around real-world impact</div>
+              </div>
+            </div>
+            <div class="mission-mini-card" style="margin-left:30px">
+              <div class="mission-mini-icon">🌱</div>
+              <div>
+                <div class="mission-mini-title">Holistic Development</div>
+                <div class="mission-mini-text">Mental, physical, intellectual, and emotional growth</div>
+              </div>
+            </div>
+            <div class="mission-mini-card">
+              <div class="mission-mini-icon">⚡</div>
+              <div>
+                <div class="mission-mini-title">Innovation First</div>
+                <div class="mission-mini-text">Research, entrepreneurship and creativity at the core</div>
+              </div>
+            </div>
+            <div class="mission-mini-card" style="margin-left:30px">
+              <div class="mission-mini-icon">🤝</div>
+              <div>
+                <div class="mission-mini-title">Global Community</div>
+                <div class="mission-mini-text">196 nationalities, one shared vision</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section class="timeline-section">
+    <div class="container">
+      <div style="text-align:center">
+        <div class="section-tag" style="justify-content:center">Our Journey</div>
+        <h2 class="section-title" style="text-align:center">7 Decades of <span>Legacy</span></h2>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-content left glass-card">
+            <div class="timeline-year">1947</div>
+            <div class="timeline-title">Founded</div>
+            <div class="timeline-text">Established with 200 students and a dream to build India's finest academic institution</div>
+          </div>
+          <div class="timeline-dot">★</div>
+          <div></div>
+        </div>
+        <div class="timeline-item">
+          <div></div>
+          <div class="timeline-dot">🔬</div>
+          <div class="timeline-content right glass-card">
+            <div class="timeline-year">1975</div>
+            <div class="timeline-title">Research Revolution</div>
+            <div class="timeline-text">First research campus opens; 18 Nobel Prize nominations in the following decade</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-content left glass-card">
+            <div class="timeline-year">2001</div>
+            <div class="timeline-title">Digital Transformation</div>
+            <div class="timeline-text">First Indian university to fully digitize academic records and go paperless</div>
+          </div>
+          <div class="timeline-dot">💻</div>
+          <div></div>
+        </div>
+        <div class="timeline-item">
+          <div></div>
+          <div class="timeline-dot">🌐</div>
+          <div class="timeline-content right glass-card">
+            <div class="timeline-year">2015</div>
+            <div class="timeline-title">Global Recognition</div>
+            <div class="timeline-text">Ranked in QS Top 50 for the first time; 500+ international partnerships formed</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-content left glass-card">
+            <div class="timeline-year">2026</div>
+            <div class="timeline-title">POORNIMA System Launch</div>
+            <div class="timeline-text">AI-powered university management system deployed across all departments</div>
+          </div>
+          <div class="timeline-dot" style="border-color:var(--gold);color:var(--gold)">⚡</div>
+          <div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRAMS -->
+  <section class="programs">
+    <div class="container">
+      <div class="section-tag">Academic Excellence</div>
+      <h2 class="section-title">World-Class <span>Programs</span></h2>
+      <div class="programs-grid">
+        <div class="program-card glass-card" style="background:linear-gradient(135deg,rgba(0,180,216,0.05),rgba(13,30,53,0.9))">
+          <div class="program-bg">🖥️</div>
+          <div class="program-gradient"></div>
+          <div class="program-content">
+            <div class="program-title">Computer Science & AI</div>
+            <div class="program-desc">Deep dive into algorithms, machine learning, and the future of intelligent systems</div>
+            <div class="program-meta">
+              <span class="badge badge-cyan">4 Years</span>
+              <span class="badge badge-green">BTech</span>
+            </div>
+          </div>
+        </div>
+        <div class="program-card glass-card">
+          <div class="program-bg">⚗️</div>
+          <div class="program-gradient"></div>
+          <div class="program-content">
+            <div class="program-title">Biotechnology</div>
+            <div class="program-desc">Cutting-edge research in genomics, protein engineering, and synthetic biology</div>
+            <div class="program-meta">
+              <span class="badge badge-gold">5 Years</span>
+              <span class="badge badge-coral">Integrated</span>
+            </div>
+          </div>
+        </div>
+        <div class="program-card glass-card">
+          <div class="program-bg">📈</div>
+          <div class="program-gradient"></div>
+          <div class="program-content">
+            <div class="program-title">Business & Finance</div>
+            <div class="program-desc">Global business strategy, fintech, and entrepreneurship for tomorrow's leaders</div>
+            <div class="program-meta">
+              <span class="badge badge-cyan">2 Years</span>
+              <span class="badge badge-green">MBA</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section class="team">
+    <div class="container">
+      <div style="text-align:center">
+        <div class="section-tag" style="justify-content:center">Leadership</div>
+        <h2 class="section-title" style="text-align:center">Minds Behind<br/><span>POORNIMA</span></h2>
+      </div>
+      <div class="team-grid">
+        <div class="glass-card team-card">
+          <div class="team-avatar" style="background:linear-gradient(135deg,rgba(0,229,255,0.15),rgba(0,180,216,0.1))">🎓</div>
+          <div class="team-name">Prof. Vikram Nair</div>
+          <div class="team-role">Vice Chancellor</div>
+          <div class="team-dept">LEADERSHIP</div>
+        </div>
+        <div class="glass-card team-card">
+          <div class="team-avatar" style="background:linear-gradient(135deg,rgba(255,193,55,0.15),rgba(230,168,0,0.1))">🔬</div>
+          <div class="team-name">Dr. Anjali Singh</div>
+          <div class="team-role">Dean of Research</div>
+          <div class="team-dept">RESEARCH</div>
+        </div>
+        <div class="glass-card team-card">
+          <div class="team-avatar" style="background:linear-gradient(135deg,rgba(0,245,160,0.15),rgba(0,180,100,0.1))">💻</div>
+          <div class="team-name">Dr. Rohan Gupta</div>
+          <div class="team-role">CTO, Digital Systems</div>
+          <div class="team-dept">TECHNOLOGY</div>
+        </div>
+        <div class="glass-card team-card">
+          <div class="team-avatar" style="background:linear-gradient(135deg,rgba(255,107,107,0.15),rgba(200,80,80,0.1))">🌐</div>
+          <div class="team-name">Ms. Fatima Khan</div>
+          <div class="team-role">Director, Global Affairs</div>
+          <div class="team-dept">GLOBAL</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section class="values">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:0">
+        <div class="section-tag" style="justify-content:center">Core Principles</div>
+        <h2 class="section-title" style="text-align:center">Our <span>Values</span></h2>
+      </div>
+      <div class="values-grid">
+        <div class="glass-card value-card">
+          <div class="value-num">01</div>
+          <div><div class="value-title">Intellectual Courage</div><div class="value-text">We encourage questioning everything — including our own assumptions. The greatest discoveries come from those brave enough to challenge orthodoxy.</div></div>
+        </div>
+        <div class="glass-card value-card">
+          <div class="value-num">02</div>
+          <div><div class="value-title">Radical Inclusion</div><div class="value-text">Excellence has no caste, colour, or creed. We recruit talent from every corner of the world and ensure every voice is heard and valued.</div></div>
+        </div>
+        <div class="glass-card value-card">
+          <div class="value-num">03</div>
+          <div><div class="value-title">Purposeful Innovation</div><div class="value-text">We don't innovate for novelty — we innovate to solve. Every research project, every technology, must answer: how does this improve human lives?</div></div>
+        </div>
+        <div class="glass-card value-card">
+          <div class="value-num">04</div>
+          <div><div class="value-title">Long-term Thinking</div><div class="value-text">We make decisions not for quarterly results but for generational impact. POORNIMA is building a legacy that will outlast all of us.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="nav-logo"><div class="nav-logo-icon">PU</div><div><span class="nav-logo-text">POORNIMA</span><span class="nav-logo-sub">University</span></div></a>
+          <p>Redefining excellence in higher education through technology, research, and an uncompromising commitment to human potential.</p>
+        </div>
+        <div class="footer-col"><h4>Academics</h4><ul><li><a href="#">Undergraduate</a></li><li><a href="#">Postgraduate</a></li><li><a href="#">PhD Programs</a></li><li><a href="#">Online Courses</a></li></ul></div>
+        <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="about.html">About Us</a></li><li><a href="admission.html">Admissions</a></li><li><a href="contact.html">Contact</a></li><li><a href="privacy.html">Privacy</a></li></ul></div>
+        <div class="footer-col"><h4>Contact</h4><ul><li><a href="#">📍 Jaipur, Rajasthan</a></li><li><a href="#">📞 +91 98765 43210</a></li><li><a href="#">✉️ info@poornima.edu</a></li></ul></div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 POORNIMA University. All rights reserved.</p>
+        <div class="footer-socials"><a href="#" class="social-btn">in</a><a href="#" class="social-btn">tw</a><a href="#" class="social-btn">ig</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+    function animateRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animateRing);}
+    animateRing();
+    document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>{cursor.classList.add('hover');ring.classList.add('hover');});el.addEventListener('mouseleave',()=>{cursor.classList.remove('hover');ring.classList.remove('hover');});});
+    window.addEventListener('scroll',()=>{document.getElementById('navbar').classList.toggle('scrolled',scrollY>50);});
+  </script>
+</body>
+</html>

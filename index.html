@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>POORNIMA University — Redefining Excellence</title>
+  <link rel="stylesheet" href="sty.css"/>
+  <style>
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      position: relative; overflow: hidden;
+      padding-top: 70px;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 40%, rgba(0,180,216,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 80% at 20% 70%, rgba(255,193,55,0.05) 0%, transparent 60%),
+        var(--space);
+    }
+    .hero-scanline {
+      position: absolute; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(0,229,255,0.3), transparent);
+      animation: scanline 6s linear infinite;
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 700px;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(0,229,255,0.07);
+      border: 1px solid rgba(0,229,255,0.2);
+      border-radius: 40px;
+      padding: 8px 18px;
+      font-family: var(--font-mono);
+      font-size: 11px; letter-spacing: 2px; color: var(--cyan);
+      margin-bottom: 32px;
+      animation: slideUp 0.6s ease both;
+    }
+    .hero-eyebrow span {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--cyan);
+      animation: pulse-dot 2s ease infinite;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(52px, 7vw, 90px);
+      font-weight: 700;
+      line-height: 1;
+      color: var(--white);
+      margin-bottom: 28px;
+      animation: slideUp 0.6s ease 0.1s both;
+    }
+    .hero-title em {
+      display: block;
+      font-style: italic;
+      background: var(--grad1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-title .line3 {
+      display: block;
+      color: var(--text2);
+      font-weight: 300;
+      font-size: 0.65em;
+      letter-spacing: 1px;
+    }
+    .hero-desc {
+      font-size: 17px; color: var(--text2);
+      line-height: 1.8; margin-bottom: 44px;
+      max-width: 540px;
+      animation: slideUp 0.6s ease 0.2s both;
+    }
+    .hero-actions {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      animation: slideUp 0.6s ease 0.3s both;
+    }
+    .hero-stats {
+      display: flex; gap: 40px; margin-top: 64px;
+      padding-top: 40px;
+      border-top: 1px solid var(--border);
+      animation: slideUp 0.6s ease 0.4s both;
+    }
+    .hero-stat-num {
+      font-family: var(--font-mono);
+      font-size: 32px; font-weight: 700;
+      color: var(--white);
+    }
+    .hero-stat-num sup { font-size: 14px; color: var(--cyan); }
+    .hero-stat-label { font-size: 12px; color: var(--text3); letter-spacing: 0.5px; margin-top: 2px; }
+
+    /* Hero Right Visual */
+    .hero-visual {
+      position: absolute; right: -40px; top: 50%;
+      transform: translateY(-50%);
+      width: 580px; height: 580px;
+      z-index: 1;
+    }
+    .hero-ring {
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(0,229,255,0.1);
+    }
+    .hero-ring:nth-child(1) { animation: spin-slow 30s linear infinite; border-color: rgba(0,229,255,0.15); }
+    .hero-ring:nth-child(2) { inset: 40px; animation: spin-slow 20s linear infinite reverse; border-color: rgba(255,193,55,0.1); }
+    .hero-ring:nth-child(3) { inset: 80px; animation: spin-slow 15s linear infinite; border-color: rgba(0,229,255,0.08); }
+    .hero-core {
+      position: absolute; inset: 130px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,180,216,0.15), transparent 70%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-core-inner {
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: var(--grad1);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 48px; font-weight: 700; color: var(--space);
+      box-shadow: var(--glow-cyan), 0 0 120px rgba(0,229,255,0.3);
+      animation: glow-pulse 3s ease infinite;
+    }
+    /* Orbit dots */
+    .orbit-dot {
+      position: absolute;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+    }
+    /* Floating cards on hero */
+    .hero-float-1 {
+      position: absolute; left: -120px; top: 60px;
+      animation: float 5s ease-in-out infinite;
+    }
+    .hero-float-2 {
+      position: absolute; right: 60px; bottom: 80px;
+      animation: float 4s ease-in-out infinite 1s;
+    }
+    .hero-float-3 {
+      position: absolute; left: 30px; bottom: 30px;
+      animation: float2 6s ease-in-out infinite;
+    }
+
+    /* ── FEATURES ── */
+    .features { background: var(--deep); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px; margin-top: 60px;
+    }
+    .feature-card {
+      padding: 32px;
+      position: relative; overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--grad1);
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 0;
+    }
+    .feature-card:hover::before { opacity: 0.03; }
+    .feature-card > * { position: relative; z-index: 1; }
+    .feature-icon {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; margin-bottom: 20px;
+      transition: transform 0.3s;
+    }
+    .feature-card:hover .feature-icon { transform: scale(1.1) rotate(-5deg); }
+    .feature-card h3 { font-size: 18px; font-weight: 600; color: var(--white); margin-bottom: 10px; }
+    .feature-card p  { font-size: 14px; color: var(--text3); line-height: 1.7; }
+    .feature-arrow {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--cyan); font-size: 13px; font-weight: 600;
+      margin-top: 18px; text-decoration: none;
+      transition: gap 0.2s;
+    }
+    .feature-arrow:hover { gap: 10px; }
+
+    /* ── DASHBOARD PREVIEW ── */
+    .preview-section { background: var(--space); }
+    .preview-tabs {
+      display: flex; gap: 8px; margin-bottom: 40px;
+    }
+    .preview-tab {
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-size: 13px; font-weight: 600;
+      cursor: none; transition: all 0.2s;
+      border: 1px solid var(--border);
+      color: var(--text3);
+      background: transparent;
+    }
+    .preview-tab.active {
+      background: rgba(0,229,255,0.1);
+      border-color: rgba(0,229,255,0.3);
+      color: var(--cyan);
+    }
+    .preview-frame {
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+      position: relative;
+    }
+    .preview-topbar {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .preview-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .preview-url {
+      background: var(--navy); border-radius: 6px;
+      padding: 5px 14px; font-family: var(--font-mono);
+      font-size: 11px; color: var(--text3); margin-left: 8px;
+    }
+    .preview-body {
+      background: var(--navy);
+      display: grid; grid-template-columns: 220px 1fr;
+      min-height: 400px;
+    }
+    .preview-sidebar {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 20px;
+    }
+    .preview-sidebar-item {
+      padding: 10px 12px; border-radius: 8px;
+      font-size: 13px; color: var(--text3);
+      margin-bottom: 4px; display: flex; align-items: center; gap: 10px;
+    }
+    .preview-sidebar-item.active { background: rgba(0,229,255,0.1); color: var(--cyan); }
+    .preview-main { padding: 24px; }
+    .preview-stat-row {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+      margin-bottom: 24px;
+    }
+    .preview-stat {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px;
+    }
+    .preview-stat-val { font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: var(--white); }
+    .preview-stat-lbl { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials { background: var(--deep); }
+    .testimonial-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 60px; }
+    .testimonial-card { padding: 32px; }
+    .testimonial-stars { color: var(--gold); font-size: 14px; margin-bottom: 16px; letter-spacing: 2px; }
+    .testimonial-text { font-size: 15px; color: var(--text2); line-height: 1.8; font-style: italic; margin-bottom: 24px; }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; }
+    .testimonial-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700; font-family: var(--font-mono);
+      color: var(--space);
+    }
+    .testimonial-name { font-size: 14px; font-weight: 600; color: var(--white); }
+    .testimonial-role { font-size: 12px; color: var(--text3); }
+
+    /* ── CTA SECTION ── */
+    .cta-section {
+      background: var(--space);
+      text-align: center; padding: 120px 0;
+    }
+    .cta-inner {
+      position: relative;
+      background: linear-gradient(135deg, rgba(0,180,216,0.08), rgba(255,193,55,0.05));
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 80px 60px;
+      overflow: hidden;
+    }
+    .cta-inner::before {
+      content: '';
+      position: absolute; top: -1px; left: 10%; right: 10%;
+      height: 2px;
+      background: var(--grad1);
+      border-radius: 2px;
+    }
+    .cta-glow-1 { position: absolute; width: 300px; height: 300px; top: -100px; right: -100px; background: var(--cyan); filter: blur(100px); opacity: 0.05; }
+    .cta-glow-2 { position: absolute; width: 300px; height: 300px; bottom: -100px; left: -100px; background: var(--gold); filter: blur(100px); opacity: 0.05; }
+  </style>
+  <link rel="stylesheet" href="../css/style.css">
+
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">PU</div>
+      <div>
+        <span class="nav-logo-text">POORNIMA</span>
+        <span class="nav-logo-sub">University</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="admission.html">Admission</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="privacy.html">Privacy</a></li>
+      <li><a href="admission.html" class="nav-cta">Apply Now →</a></li>
+      <li><a href="login/role-selection.html" class="btn btn-outline" , class="nav-cta">Login</a></li>
+    </ul>
+  </nav>
+
+  <button class="chatbot-float-btn" onclick="window.location.href='chatbot.html'">💬 Chat Now</button>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="grid-bg"></div>
+    <div class="hero-scanline"></div>
+    <div class="glow-orb orb-cyan"  style="width:500px;height:500px;top:-100px;right:100px;"></div>
+    <div class="glow-orb orb-gold"  style="width:300px;height:300px;bottom:-50px;left:200px;"></div>
+
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;width:100%;position:relative;z-index:2">
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <span></span>
+          RANKED #1 GLOBALLY 2026 — QS WORLD RANKINGS
+        </div>
+
+        <h1 class="hero-title">
+          Where<br/>
+          <em>Brilliance</em>
+          <span class="line3">Meets Tomorrow</span>
+        </h1>
+
+        <p class="hero-desc">
+          POORNIMA University is not just an institution — it's a movement. We forge the minds that will redefine science, art, business, and technology for generations to come.
+        </p>
+
+        <div class="hero-actions">
+          <a href="admission.html" class="btn btn-primary">
+            <span>Start Your Journey</span>
+            <span>→</span>
+          </a>
+          <a href="about.html" class="btn btn-outline">
+            <span>Explore Programs</span>
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-num">42<sup>K+</sup></div>
+            <div class="hero-stat-label">Students Enrolled</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">196<sup>+</sup></div>
+            <div class="hero-stat-label">Countries Represented</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">98<sup>%</sup></div>
+            <div class="hero-stat-label">Employment Rate</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual -->
+      <div class="hero-visual">
+        <div class="hero-ring"></div>
+        <div class="hero-ring"></div>
+        <div class="hero-ring"></div>
+        <div class="hero-core">
+          <div class="hero-core-inner">PU</div>
+        </div>
+
+        <!-- Floating widgets on rings -->
+        <div class="float-widget hero-float-1" style="min-width:180px">
+          <div class="float-widget-inner">
+            <div class="float-widget-icon" style="background:rgba(0,245,160,0.15)">🎓</div>
+            <div>
+              <div class="float-widget-label">Active Students</div>
+              <div class="float-widget-value">42,180</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="float-widget hero-float-2" style="min-width:190px">
+          <div class="float-widget-inner">
+            <div class="float-widget-icon" style="background:rgba(255,193,55,0.15)">⭐</div>
+            <div>
+              <div class="float-widget-label">Global Ranking</div>
+              <div class="float-widget-value" style="color:var(--gold)">#1 Worldwide</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="float-widget hero-float-3" style="min-width:170px">
+          <div class="float-widget-inner">
+            <div class="float-widget-icon" style="background:rgba(0,229,255,0.15)">🔬</div>
+            <div>
+              <div class="float-widget-label">Research Papers</div>
+              <div class="float-widget-value">18,420</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features">
+    <div class="container">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end">
+        <div>
+          <div class="section-tag">Why POORNIMA</div>
+          <h2 class="section-title">A System Built for<br/><span>Modern Excellence</span></h2>
+        </div>
+        <a href="about.html" class="btn btn-ghost" style="margin-bottom:20px">View All Programs →</a>
+      </div>
+
+      <div class="features-grid">
+        <!-- Card 1 -->
+        <div class="glass-card feature-card">
+          <div class="feature-icon" style="background:rgba(0,229,255,0.1)">🧠</div>
+          <h3>AI-Powered Learning</h3>
+          <p>Our adaptive learning platform personalizes curriculum paths using cutting-edge AI, ensuring every student reaches their peak potential.</p>
+          <a class="feature-arrow" href="about.html">Learn More <span>→</span></a>
+        </div>
+        <!-- Card 2 -->
+        <div class="glass-card feature-card">
+          <div class="feature-icon" style="background:rgba(255,193,55,0.1)">🏛️</div>
+          <h3>World-Class Faculty</h3>
+          <p>Over 2,400 Nobel laureates, industry pioneers, and visionary researchers form the backbone of our academic community.</p>
+          <a class="feature-arrow" href="about.html">Learn More <span>→</span></a>
+        </div>
+        <!-- Card 3 -->
+        <div class="glass-card feature-card">
+          <div class="feature-icon" style="background:rgba(0,245,160,0.1)">🌐</div>
+          <h3>Global Network</h3>
+          <p>Access to 500+ partner universities worldwide, international internship programs, and a 200,000+ strong alumni network.</p>
+          <a class="feature-arrow" href="contact.html">Learn More <span>→</span></a>
+        </div>
+        <!-- Card 4 -->
+        <div class="glass-card feature-card">
+          <div class="feature-icon" style="background:rgba(255,107,107,0.1)">📊</div>
+          <h3>Smart Management System</h3>
+          <p>Unified digital platform for students, teachers, and administrators — attendance, grading, assignments, all in one place.</p>
+          <a class="feature-arrow" href="about.html">Learn More <span>→</span></a>
+        </div>
+        <!-- Card 5 -->
+        <div class="glass-card feature-card">
+          <div class="feature-icon" style="background:rgba(0,229,255,0.1)">🔬</div>
+          <h3>Research Excellence</h3>
+          <p>₹2.4 billion annual research budget, 180 state-of-the-art labs, and partnerships with NASA, ISRO, CERN, and Google DeepMind.</p>
+          <a class="feature-arrow" href="about.html">Learn More <span>→</span></a>
+        </div>
+        <!-- Card 6 -->
+        <div class="glass-card feature-card">
+          <div class="feature-icon" style="background:rgba(255,193,55,0.1)">🏆</div>
+          <h3>Industry Placement</h3>
+          <p>Guaranteed internship program, dedicated placement cell, and 98% employment rate within 6 months of graduation.</p>
+          <a class="feature-arrow" href="admission.html">Learn More <span>→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD PREVIEW -->
+  <section class="preview-section">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:20px">
+        <div class="section-tag" style="justify-content:center">Management System</div>
+        <h2 class="section-title" style="text-align:center">Dashboard <span>Preview</span></h2>
+        <p class="section-desc" style="margin:0 auto;text-align:center">A fully integrated system where every stakeholder has a personalized, intelligent workspace.</p>
+      </div>
+
+      <div class="preview-tabs" style="justify-content:center;margin-top:32px">
+        <button class="preview-tab active">HOD Dashboard</button>
+        <button class="preview-tab">Teacher View</button>
+        <button class="preview-tab">Student Portal</button>
+      </div>
+
+      <div class="preview-frame">
+        <div class="preview-topbar">
+          <div class="preview-dot" style="background:#ff5f57"></div>
+          <div class="preview-dot" style="background:#febc2e"></div>
+          <div class="preview-dot" style="background:#28c840"></div>
+          <div class="preview-url">poornima.edu/hod/dashboard</div>
+        </div>
+        <div class="preview-body">
+          <div class="preview-sidebar">
+            <div style="font-size:11px;color:var(--text3);letter-spacing:2px;margin-bottom:14px;padding:0 12px">NAVIGATION</div>
+            <div class="preview-sidebar-item active">📊 Dashboard</div>
+            <div class="preview-sidebar-item">👥 Teachers</div>
+            <div class="preview-sidebar-item">📚 Classes</div>
+            <div class="preview-sidebar-item">✅ Attendance</div>
+            <div class="preview-sidebar-item">📝 Reports</div>
+            <div class="preview-sidebar-item">💬 Messages</div>
+            <div class="preview-sidebar-item">⚙️ Settings</div>
+          </div>
+          <div class="preview-main">
+            <div style="font-size:18px;font-weight:700;color:var(--white);margin-bottom:20px">Good Morning, Dr. Sharma 👋</div>
+            <div class="preview-stat-row">
+              <div class="preview-stat">
+                <div class="preview-stat-val" style="color:var(--cyan)">24</div>
+                <div class="preview-stat-lbl">Teachers</div>
+              </div>
+              <div class="preview-stat">
+                <div class="preview-stat-val" style="color:var(--gold)">1,842</div>
+                <div class="preview-stat-lbl">Students</div>
+              </div>
+              <div class="preview-stat">
+                <div class="preview-stat-val" style="color:var(--green)">94.2%</div>
+                <div class="preview-stat-lbl">Avg Attendance</div>
+              </div>
+              <div class="preview-stat">
+                <div class="preview-stat-val" style="color:var(--coral)">6</div>
+                <div class="preview-stat-lbl">Pending Tasks</div>
+              </div>
+            </div>
+            <div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px">
+              <div style="font-size:12px;color:var(--text3);margin-bottom:12px;letter-spacing:1px">RECENT ACTIVITY</div>
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2)"><span style="color:var(--green)">●</span> Mr. Ali marked attendance for CS301-A</div>
+                <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2)"><span style="color:var(--cyan)">●</span> New assignment posted in CS401</div>
+                <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text2)"><span style="color:var(--gold)">●</span> Sara Ahmed submitted project report</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials">
+    <div class="container">
+      <div style="text-align:center">
+        <div class="section-tag" style="justify-content:center">Student Voices</div>
+        <h2 class="section-title" style="text-align:center">What They <span>Say</span></h2>
+      </div>
+      <div class="testimonial-grid">
+        <div class="glass-card testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"POORNIMA didn't just give me a degree — it gave me a worldview. The research opportunities here are unlike anything I've seen anywhere else on the planet."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background:var(--grad1)">A</div>
+            <div>
+              <div class="testimonial-name">Arjun Mehta</div>
+              <div class="testimonial-role">Computer Science, Batch 2024</div>
+            </div>
+          </div>
+        </div>
+        <div class="glass-card testimonial-card" style="border-color:rgba(255,193,55,0.2)">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"The management system is a game-changer. I can track every student's progress, communicate instantly, and manage all my classes from one beautiful dashboard."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background:var(--grad2)">P</div>
+            <div>
+              <div class="testimonial-name">Dr. Priya Kapoor</div>
+              <div class="testimonial-role">Professor, Department of Physics</div>
+            </div>
+          </div>
+        </div>
+        <div class="glass-card testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"From Silicon Valley to Singapore — POORNIMA alumni are everywhere. The network alone is worth more than any MBA. I got 3 job offers before graduation."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background:var(--grad3)">Z</div>
+            <div>
+              <div class="testimonial-name">Zara Qureshi</div>
+              <div class="testimonial-role">MBA Graduate, Now at Google</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-inner">
+        <div class="cta-glow-1"></div>
+        <div class="cta-glow-2"></div>
+        <div class="section-tag" style="justify-content:center">Applications Open</div>
+        <h2 class="section-title" style="font-size:52px">Ready to Join the<br/><span>Next Generation?</span></h2>
+        <p style="color:var(--text2);font-size:16px;max-width:500px;margin:0 auto 40px;line-height:1.8">
+          Applications for 2026–27 are open. Limited seats. Unlimited potential.
+        </p>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+          <a href="admission.html" class="btn btn-primary" style="font-size:16px;padding:16px 36px">Apply for 2026–27 →</a>
+          <a href="contact.html"   class="btn btn-outline" style="font-size:16px;padding:16px 36px">Talk to Advisor</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="nav-logo" style="text-decoration:none">
+            <div class="nav-logo-icon">PU</div>
+            <div>
+              <span class="nav-logo-text">POORNIMA</span>
+              <span class="nav-logo-sub">University</span>
+            </div>
+          </a>
+          <p>Redefining excellence in higher education through technology, research, and an uncompromising commitment to human potential.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Academics</h4>
+          <ul>
+            <li><a href="#">Undergraduate</a></li>
+            <li><a href="#">Postgraduate</a></li>
+            <li><a href="#">PhD Programs</a></li>
+            <li><a href="#">Online Courses</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="admission.html">Admissions</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="#">📍 Jaipur, Rajasthan</a></li>
+            <li><a href="#">📞 +91 98765 43210</a></li>
+            <li><a href="#">✉️ info@poornima.edu</a></li>
+            <li><a href="#">🌐 www.poornima.edu</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 POORNIMA University. All rights reserved.</p>
+        <div class="footer-socials">
+          <a href="#" class="social-btn">in</a>
+          <a href="#" class="social-btn">tw</a>
+          <a href="#" class="social-btn">ig</a>
+          <a href="#" class="social-btn">yt</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Custom Cursor
+    const cursor = document.getElementById('cursor');
+    const ring   = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx+'px'; cursor.style.top = my+'px'; });
+    function animateRing() { rx += (mx-rx)*0.12; ry += (my-ry)*0.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(animateRing); }
+    animateRing();
+    document.querySelectorAll('a,button,.preview-tab').forEach(el => {
+      el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); ring.classList.add('hover'); });
+      el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); ring.classList.remove('hover'); });
+    });
+
+    // Navbar scroll
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', scrollY > 50);
+    });
+
+    // Preview tabs
+    document.querySelectorAll('.preview-tab').forEach((tab, i) => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.preview-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
